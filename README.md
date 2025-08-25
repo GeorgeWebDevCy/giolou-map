@@ -28,6 +28,10 @@ This WordPress plugin displays custom post type locations on a Mapbox map. It al
 
 ## Usage
 Create `Map Location` posts with latitude and longitude fields and place the `[gn_map]` shortcode on any page.
+### 2.175.0
+- Fix route selector to show Path 1 and Path 2 separately
+- Bumped plugin version
+
 ### 2.174.0
 - Split nature trail into two selectable routes
 - Bumped plugin version

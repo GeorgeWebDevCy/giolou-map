@@ -136,8 +136,8 @@
         <div id="gn-nav-controls" style="padding: 6px; background: white;">
             <select id="gn-route-select" class="gn-nav-select">
               <option value="">Select Route</option>
-              <option value="path1">Διαδρομή 1</option>
-              <option value="path2">Διαδρομή 2</option>
+              <option value="path1">Path 1</option>
+              <option value="path2">Path 2</option>
               <option value="paphos">Paphos → Giolou</option>
               <option value="airport">Paphos Airport → Giolou</option>
             </select>
