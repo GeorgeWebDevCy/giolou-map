@@ -3,7 +3,7 @@ Contributors: georgewebdev
 Tags: mapbox,acf,locations,map
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 2.178.0
+Stable tag: 2.177.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,8 +40,8 @@ Enable the Debug Panel option in **Settings → GN Mapbox** to output verbose lo
 Markers are logged in the order they appear in `data/nature-path-1.json` and `data/nature-path-2.json`.
 
 == Changelog ==
-= 2.178.0 =
-* Make `[gn_mapbox_giolou]` fill the full width and height of its column
+= 2.177.1 =
+* Revert responsive map layout changes
 * Bumped plugin version
 = 2.177.0 =
 * Assign path value when importing default locations so Path 2 draws correctly
