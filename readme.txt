@@ -3,7 +3,7 @@ Contributors: georgewebdev
 Tags: mapbox,acf,locations,map
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 2.174.0
+Stable tag: 2.175.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,9 @@ Enable the Debug Panel option in **Settings → GN Mapbox** to output verbose lo
 Markers are logged in the order they appear in `data/nature-path-1.json` and `data/nature-path-2.json`.
 
 == Changelog ==
+= 2.175.0 =
+* Fix route selector to show Path 1 and Path 2 separately
+* Bumped plugin version
 = 2.174.0 =
 * Split nature trail into two selectable routes
 * Bumped plugin version
