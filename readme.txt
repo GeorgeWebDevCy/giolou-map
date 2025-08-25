@@ -3,7 +3,7 @@ Contributors: georgewebdev
 Tags: mapbox,acf,locations,map
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 2.173.0
+Stable tag: 2.174.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,7 @@ GN Mapbox Locations with ACF creates a **Map Location** post type for storing co
 * Offline map tile caching via service worker.
 * Visitors may upload photos or videos on the front end; admins can approve or delete each submission before publishing.
 * Upload forms automatically appear in map popups and inside each location post.
-* Example locations from `data/locations.json` are imported when none exist.
+* Example locations from `data/nature-path-1.json` and `data/nature-path-2.json` are imported when none exist.
 * Automatic update checks from GitHub.
 * Ready for translation and WPML compatible.
 
@@ -37,9 +37,13 @@ GN Mapbox Locations with ACF creates a **Map Location** post type for storing co
 
 == Debugging ==
 Enable the Debug Panel option in **Settings → GN Mapbox** to output verbose logs to the browser console.
-Markers are logged in the order they appear in `data/locations.json`.
+Markers are logged in the order they appear in `data/nature-path-1.json` and `data/nature-path-2.json`.
 
 == Changelog ==
+= 2.174.0 =
+* Split nature trail into two selectable routes
+* Bumped plugin version
+
 = 2.173.0 =
 * Transition plugin for Giolou including shortcodes and default dataset
 * Bumped plugin version

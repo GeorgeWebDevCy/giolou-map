@@ -36,7 +36,9 @@ def dist_to_segment(p, a, b):
     return haversine(p, proj)
 
 if __name__ == '__main__':
-    data = json.load(open('data/locations.json'))
+    data1 = json.load(open('data/nature-path-1.json'))
+    data2 = json.load(open('data/nature-path-2.json'))
+    data = data1 + data2
     targets = ['Βολατζιές', 'Οικισμός Πιττοκόπος']
     for i, loc in enumerate(data):
         if loc['title'] in targets:
