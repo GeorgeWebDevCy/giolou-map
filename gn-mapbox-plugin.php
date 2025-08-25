@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.172.0
+Version: 2.173.0
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -25,7 +25,7 @@ require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/GeorgeWebDevCy/drousia-map/',
+    'https://github.com/GeorgeWebDevCy/giolou-map/',
     __FILE__,
     'gn-mapbox-plugin'
 );
@@ -853,69 +853,69 @@ function gn_process_photo_deletion() {
 add_action('admin_post_gn_delete_photo', 'gn_process_photo_deletion');
 
 /**
- * Simple shortcode displaying a single marker on Drouseia using Mapbox GL JS.
+ * Simple shortcode displaying a single marker on Giolou using Mapbox GL JS.
  * The map also outlines the village with a polygonal red boundary line.
- * Usage: [gn_mapbox_drouseia]
+ * Usage: [gn_mapbox_giolou]
 */
-function gn_mapbox_drouseia_shortcode() {
+function gn_mapbox_giolou_shortcode() {
     $token = get_option('gn_mapbox_token');
     if (!$token) {
         return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
-    <div id="gn-mapbox-drouseia" style="width: 100%; height: 400px;"></div>
+    <div id="gn-mapbox-giolou" style="width: 100%; height: 400px;"></div>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
     <script>
       mapboxgl.accessToken = '<?php echo esc_js($token); ?>';
         const map = new mapboxgl.Map({
-          container: 'gn-mapbox-drouseia',
+          container: 'gn-mapbox-giolou',
           style: 'mapbox://styles/mapbox/satellite-streets-v11',
-          center: [32.397643, 34.959782],
+          center: [32.4773453, 34.9220437],
           zoom: 14
         });
 
       new mapboxgl.Marker()
-        .setLngLat([32.397643, 34.959782])
-        .setPopup(new mapboxgl.Popup().setText('Drouseia, Cyprus'))
+        .setLngLat([32.4773453, 34.9220437])
+        .setPopup(new mapboxgl.Popup().setText('Giolou, Cyprus'))
         .addTo(map);
 
       map.on('load', () => {
-        map.addSource('drouseia-area', {
+        map.addSource('giolou-area', {
           type: 'geojson',
           data: {
             type: 'Feature',
             geometry: {
               type: 'Polygon',
               coordinates: [[
-                [32.3920, 34.9642],
-                [32.3945, 34.9670],
-                [32.3985, 34.9685],
-                [32.4025, 34.9675],
-                [32.4045, 34.9650],
-                [32.4040, 34.9605],
-                [32.4010, 34.9580],
-                [32.3960, 34.9575],
-                [32.3925, 34.9600],
-                [32.3920, 34.9642]
+                [32.4717023, 34.9264617],
+                [32.4742023, 34.9292617],
+                [32.4782023, 34.9307617],
+                [32.4822023, 34.9297617],
+                [32.4842023, 34.9272617],
+                [32.4837023, 34.9227617],
+                [32.4807023, 34.9202617],
+                [32.4757023, 34.9197617],
+                [32.4722023, 34.9222617],
+                [32.4717023, 34.9264617]
               ]]
             }
           }
         });
         map.addLayer({
-          id: 'drouseia-fill',
+          id: 'giolou-fill',
           type: 'fill',
-          source: 'drouseia-area',
+          source: 'giolou-area',
           paint: {
             'fill-color': '#DB8718',
             'fill-opacity': 0.1
           }
         });
         map.addLayer({
-          id: 'drouseia-outline',
+          id: 'giolou-outline',
           type: 'line',
-          source: 'drouseia-area',
+          source: 'giolou-area',
           paint: {
             'line-color': '#DB8718',
             'line-width': 3
@@ -927,71 +927,71 @@ function gn_mapbox_drouseia_shortcode() {
     <?php
     return ob_get_clean();
 }
-add_shortcode('gn_mapbox_drouseia', 'gn_mapbox_drouseia_shortcode');
+add_shortcode('gn_mapbox_giolou', 'gn_mapbox_giolou_shortcode');
 
 /**
- * Same as gn_mapbox_drouseia_shortcode but the container spans the full viewport width.
- * Usage: [gn_mapbox_drouseia_100]
+ * Same as gn_mapbox_giolou_shortcode but the container spans the full viewport width.
+ * Usage: [gn_mapbox_giolou_100]
  */
-function gn_mapbox_drouseia_100_shortcode() {
+function gn_mapbox_giolou_100_shortcode() {
     $token = get_option('gn_mapbox_token');
     if (!$token) {
         return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
-    <div id="gn-mapbox-drouseia-100" style="width:100vw;height:480px;"></div>
+    <div id="gn-mapbox-giolou-100" style="width:100vw;height:480px;"></div>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
     <script>
       mapboxgl.accessToken = '<?php echo esc_js($token); ?>';
         const map = new mapboxgl.Map({
-          container: 'gn-mapbox-drouseia-100',
+          container: 'gn-mapbox-giolou-100',
           style: 'mapbox://styles/mapbox/satellite-streets-v11',
-          center: [32.397643, 34.959782],
+          center: [32.4773453, 34.9220437],
           zoom: 14
         });
 
       new mapboxgl.Marker()
-        .setLngLat([32.397643, 34.959782])
-        .setPopup(new mapboxgl.Popup().setText('Drouseia, Cyprus'))
+        .setLngLat([32.4773453, 34.9220437])
+        .setPopup(new mapboxgl.Popup().setText('Giolou, Cyprus'))
         .addTo(map);
 
       map.on('load', () => {
-        map.addSource('drouseia-area', {
+        map.addSource('giolou-area', {
           type: 'geojson',
           data: {
             type: 'Feature',
             geometry: {
               type: 'Polygon',
               coordinates: [[
-                [32.3920, 34.9642],
-                [32.3945, 34.9670],
-                [32.3985, 34.9685],
-                [32.4025, 34.9675],
-                [32.4045, 34.9650],
-                [32.4040, 34.9605],
-                [32.4010, 34.9580],
-                [32.3960, 34.9575],
-                [32.3925, 34.9600],
-                [32.3920, 34.9642]
+                [32.4717023, 34.9264617],
+                [32.4742023, 34.9292617],
+                [32.4782023, 34.9307617],
+                [32.4822023, 34.9297617],
+                [32.4842023, 34.9272617],
+                [32.4837023, 34.9227617],
+                [32.4807023, 34.9202617],
+                [32.4757023, 34.9197617],
+                [32.4722023, 34.9222617],
+                [32.4717023, 34.9264617]
               ]]
             }
           }
         });
         map.addLayer({
-          id: 'drouseia-fill',
+          id: 'giolou-fill',
           type: 'fill',
-          source: 'drouseia-area',
+          source: 'giolou-area',
           paint: {
             'fill-color': '#DB8718',
             'fill-opacity': 0.1
           }
         });
         map.addLayer({
-          id: 'drouseia-outline',
+          id: 'giolou-outline',
           type: 'line',
-          source: 'drouseia-area',
+          source: 'giolou-area',
           paint: {
             'line-color': '#DB8718',
             'line-width': 3
@@ -1003,21 +1003,21 @@ function gn_mapbox_drouseia_100_shortcode() {
     <?php
     return ob_get_clean();
 }
-add_shortcode('gn_mapbox_drouseia_100', 'gn_mapbox_drouseia_100_shortcode');
+add_shortcode('gn_mapbox_giolou_100', 'gn_mapbox_giolou_100_shortcode');
 
-// Paphos to Drouseia
-function gn_mapbox_drousia_to_paphos_shortcode() {
+// Paphos to Giolou
+function gn_mapbox_giolou_to_paphos_shortcode() {
     if (!get_option('gn_mapbox_token')) {
         return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
-    <div id="gn-mapbox-drousia-paphos" style="width:100%;height:600px;"></div>
+    <div id="gn-mapbox-giolou-paphos" style="width:100%;height:600px;"></div>
     <script>
     jQuery(function(){
         mapboxgl.accessToken = gnMapData.accessToken;
         const mapDP = new mapboxgl.Map({
-            container: 'gn-mapbox-drousia-paphos',
+            container: 'gn-mapbox-giolou-paphos',
             style: 'mapbox://styles/mapbox/satellite-streets-v11',
             center: [32.42293021940422, 34.774631500416966],
             zoom: 10
@@ -1033,55 +1033,17 @@ function gn_mapbox_drousia_to_paphos_shortcode() {
         mapDP.addControl(directionsDP, 'top-left');
         mapDP.on('load', function() {
             directionsDP.setOrigin([32.42293021940422,34.774631500416966]);
-            directionsDP.setDestination([32.397643,34.959782]);
+            directionsDP.setDestination([32.4773453,34.9220437]);
         });
     });
     </script>
     <?php
     return ob_get_clean();
 }
-add_shortcode('gn_mapbox_drousia_paphos', 'gn_mapbox_drousia_to_paphos_shortcode');
-
-// Polis to Drouseia
-function gn_mapbox_drousia_to_polis_shortcode() {
-    if (!get_option('gn_mapbox_token')) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
-    }
-    ob_start();
-    ?>
-    <div id="gn-mapbox-drousia-polis" style="width:100%;height:600px;"></div>
-    <script>
-    jQuery(function(){
-        mapboxgl.accessToken = gnMapData.accessToken;
-        const mapDPo = new mapboxgl.Map({
-            container: 'gn-mapbox-drousia-polis',
-            style: 'mapbox://styles/mapbox/satellite-streets-v11',
-            center: [32.425647063063586, 35.03373715925951],
-            zoom: 11
-        });
-
-        const directionsDPo = new MapboxDirections({
-            accessToken: gnMapData.accessToken,
-            unit: 'metric',
-            profile: 'mapbox/driving',
-            alternatives: false
-        });
-
-        mapDPo.addControl(directionsDPo, 'top-left');
-        mapDPo.on('load', function() {
-            directionsDPo.setOrigin([32.425647063063586,35.03373715925951]);
-            directionsDPo.setDestination([32.397643,34.959782]);
-        });
-    });
-    </script>
-    <?php
-    return ob_get_clean();
-}
-add_shortcode('gn_mapbox_drousia_polis', 'gn_mapbox_drousia_to_polis_shortcode');
-
-// Paphos Airport to Drouseia
+add_shortcode('gn_mapbox_giolou_paphos', 'gn_mapbox_giolou_to_paphos_shortcode');
+// Paphos Airport to Giolou
 // Function name previously suggested opposite direction. Renamed for clarity.
-function gn_mapbox_airport_to_drousia_shortcode() {
+function gn_mapbox_airport_to_giolou_shortcode() {
     if (!get_option('gn_mapbox_token')) {
         return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
@@ -1108,14 +1070,14 @@ function gn_mapbox_airport_to_drousia_shortcode() {
         mapPA.addControl(directionsPA, 'top-left');
         mapPA.on('load', function() {
             directionsPA.setOrigin([32.490296426999045,34.70974769197728]);
-            directionsPA.setDestination([32.397643,34.959782]);
+            directionsPA.setDestination([32.4773453,34.9220437]);
         });
     });
     </script>
     <?php
     return ob_get_clean();
 }
-add_shortcode('gn_mapbox_paphos_airport', 'gn_mapbox_airport_to_drousia_shortcode');
+add_shortcode('gn_mapbox_paphos_airport', 'gn_mapbox_airport_to_giolou_shortcode');
 
 
 
