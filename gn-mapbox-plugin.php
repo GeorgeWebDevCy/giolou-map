@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.173.0
+Version: 2.174.0
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -100,46 +100,52 @@ function gn_location_exists($title, $lat = null, $lng = null) {
  * plugin is first installed.
  */
 function gn_import_default_locations() {
-    $json_file = plugin_dir_path(__FILE__) . 'data/locations.json';
-    if (!file_exists($json_file)) {
-        return;
-    }
+    $files = [
+        plugin_dir_path(__FILE__) . 'data/nature-path-1.json',
+        plugin_dir_path(__FILE__) . 'data/nature-path-2.json',
+    ];
 
-    $json = file_get_contents($json_file);
-    $locations = json_decode($json, true);
-    if (!is_array($locations)) {
-        return;
-    }
-
-    foreach ($locations as $index => $location) {
-        if (empty($location['title'])) {
+    foreach ($files as $json_file) {
+        if (!file_exists($json_file)) {
             continue;
         }
 
-        $lat = $location['lat'] ?? null;
-        $lng = $location['lng'] ?? null;
-        if (gn_location_exists($location['title'], $lat, $lng)) {
+        $json = file_get_contents($json_file);
+        $locations = json_decode($json, true);
+        if (!is_array($locations)) {
             continue;
         }
 
-        $post_id = wp_insert_post([
-            'post_title'   => wp_strip_all_tags($location['title']),
-            'post_content' => $location['content'] ?? '',
-            'post_status'  => 'publish',
-            'post_type'    => 'map_location',
-        ]);
+        foreach ($locations as $index => $location) {
+            if (empty($location['title'])) {
+                continue;
+            }
 
-        if (!is_wp_error($post_id)) {
-            if (isset($location['lat'])) {
-                update_post_meta($post_id, 'latitude', $location['lat']);
+            $lat = $location['lat'] ?? null;
+            $lng = $location['lng'] ?? null;
+            if (gn_location_exists($location['title'], $lat, $lng)) {
+                continue;
             }
-            if (isset($location['lng'])) {
-                update_post_meta($post_id, 'longitude', $location['lng']);
+
+            $post_id = wp_insert_post([
+                'post_title'   => wp_strip_all_tags($location['title']),
+                'post_content' => $location['content'] ?? '',
+                'post_status'  => 'publish',
+                'post_type'    => 'map_location',
+            ]);
+
+            if (!is_wp_error($post_id)) {
+                if (isset($location['lat'])) {
+                    update_post_meta($post_id, 'latitude', $location['lat']);
+                }
+                if (isset($location['lng'])) {
+                    update_post_meta($post_id, 'longitude', $location['lng']);
+                }
+                if (isset($location['waypoint'])) {
+                    update_post_meta($post_id, '_gn_waypoint', $location['waypoint'] ? '1' : '');
+                }
+                update_post_meta($post_id, '_gn_location_order', $index);
             }
-            if (isset($location['waypoint'])) {
-                update_post_meta($post_id, '_gn_waypoint', $location['waypoint'] ? '1' : '');
-            }
-            update_post_meta($post_id, '_gn_location_order', $index);
         }
     }
 }
@@ -429,7 +435,7 @@ function gn_enqueue_mapbox_assets() {
     wp_enqueue_script('gn-photo-upload', plugin_dir_url(__FILE__) . 'js/gn-photo-upload.js', ['jquery'], null, true);
     wp_localize_script('gn-mapbox-init', 'gnMapData', [
         'accessToken' => get_option('gn_mapbox_token'),
-        'locations'   => gn_get_map_locations(),
+        'paths'       => gn_get_map_locations(),
         'debug'       => get_option('gn_mapbox_debug') === '1',
         'swPath'      => home_url('/?gn_map_sw=1'),
     ]);
@@ -444,8 +450,13 @@ function gn_enqueue_mapbox_assets() {
 add_action('wp_enqueue_scripts', 'gn_enqueue_mapbox_assets');
 
 function gn_get_map_locations() {
-    // Determine if verbose debug logging is enabled via plugin settings.
     $debug_enabled = get_option('gn_mapbox_debug') === '1';
+
+    $locations = [
+        'path1' => [],
+        'path2' => [],
+    ];
+
     $query = new WP_Query([
         'post_type'      => 'map_location',
         'posts_per_page' => -1,
@@ -454,111 +465,57 @@ function gn_get_map_locations() {
         'order'          => 'ASC',
     ]);
 
-    $locations = [];
-
     while ($query->have_posts()) {
         $query->the_post();
         $lat = get_field('latitude');
         $lng = get_field('longitude');
-
-        // Debug output to error log if enabled
-        if ($debug_enabled) {
-            error_log('Checking post: ' . get_the_title());
-            error_log('Latitude: ' . print_r($lat, true));
-            error_log('Longitude: ' . print_r($lng, true));
+        if (!$lat || !$lng) {
+            continue;
         }
 
-        if ($lat && $lng) {
-            $gallery_ids = get_post_meta(get_the_ID(), '_gn_location_photos', true);
-            $gallery = [];
-            if ($gallery_ids) {
-                foreach (explode(',', $gallery_ids) as $gid) {
-                    $attachment = get_post($gid);
-                    if (!$attachment) continue;
-                    if (strpos($attachment->post_mime_type, 'video') === 0) {
-                        $url = wp_get_attachment_url($gid);
-                        if ($url) $gallery[] = ['url' => $url, 'type' => 'video'];
-                    } else {
-                        $url = wp_get_attachment_image_url($gid, 'medium');
-                        if ($url) $gallery[] = ['url' => $url, 'type' => 'image'];
-                    }
+        $gallery_ids = get_post_meta(get_the_ID(), '_gn_location_photos', true);
+        $gallery = [];
+        if ($gallery_ids) {
+            foreach (explode(',', $gallery_ids) as $gid) {
+                $attachment = get_post($gid);
+                if (!$attachment) continue;
+                if (strpos($attachment->post_mime_type, 'video') === 0) {
+                    $url = wp_get_attachment_url($gid);
+                    if ($url) $gallery[] = ['url' => $url, 'type' => 'video'];
+                } else {
+                    $url = wp_get_attachment_image_url($gid, 'medium');
+                    if ($url) $gallery[] = ['url' => $url, 'type' => 'image'];
                 }
             }
-
-            $raw_content = get_the_content();
-            $raw_content = preg_replace('/\[gn_photo_upload[^\]]*\]/', '', $raw_content);
-            $locations[] = [
-                'id'          => get_the_ID(),
-                'title'       => get_the_title(),
-                'content'     => apply_filters('the_content', $raw_content),
-                'image'       => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
-                'gallery'     => $gallery,
-                'upload_form' => do_shortcode('[gn_photo_upload location="' . get_the_ID() . '"]'),
-                'lat'         => floatval($lat),
-                'lng'         => floatval($lng),
-                'waypoint'    => get_post_meta(get_the_ID(), '_gn_waypoint', true) === '1',
-            ];
         }
+
+        $raw_content = get_the_content();
+        $raw_content = preg_replace('/\[gn_photo_upload[^\]]*\]/', '', $raw_content);
+        $path = get_post_meta(get_the_ID(), '_gn_path', true) === '2' ? 'path2' : 'path1';
+        $locations[$path][] = [
+            'id'          => get_the_ID(),
+            'title'       => get_the_title(),
+            'content'     => apply_filters('the_content', $raw_content),
+            'image'       => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
+            'gallery'     => $gallery,
+            'upload_form' => do_shortcode('[gn_photo_upload location="' . get_the_ID() . '"]'),
+            'lat'         => floatval($lat),
+            'lng'         => floatval($lng),
+            'waypoint'    => get_post_meta(get_the_ID(), '_gn_waypoint', true) === '1',
+        ];
     }
     wp_reset_postdata();
 
-    if ($debug_enabled) {
-        error_log('Total locations returned: ' . count($locations));
-    }
-
-    if (empty($locations)) {
+    if (empty($locations['path1']) && empty($locations['path2'])) {
         gn_import_default_locations();
         gn_ensure_shortcodes_for_all_locations();
 
-        $query = new WP_Query([
-            'post_type'      => 'map_location',
-            'posts_per_page' => -1,
-            'meta_key'       => '_gn_location_order',
-            'orderby'        => 'meta_value_num',
-            'order'          => 'ASC',
-        ]);
+        $files = [
+            'path1' => plugin_dir_path(__FILE__) . 'data/nature-path-1.json',
+            'path2' => plugin_dir_path(__FILE__) . 'data/nature-path-2.json',
+        ];
 
-        while ($query->have_posts()) {
-            $query->the_post();
-            $lat = get_field('latitude');
-            $lng = get_field('longitude');
-
-            if ($lat && $lng) {
-                $gallery_ids = get_post_meta(get_the_ID(), '_gn_location_photos', true);
-                $gallery = [];
-                if ($gallery_ids) {
-                    foreach (explode(',', $gallery_ids) as $gid) {
-                        $attachment = get_post($gid);
-                        if (!$attachment) continue;
-                        if (strpos($attachment->post_mime_type, 'video') === 0) {
-                            $url = wp_get_attachment_url($gid);
-                            if ($url) $gallery[] = ['url' => $url, 'type' => 'video'];
-                        } else {
-                            $url = wp_get_attachment_image_url($gid, 'medium');
-                            if ($url) $gallery[] = ['url' => $url, 'type' => 'image'];
-                        }
-                    }
-                }
-
-                $raw_content = get_the_content();
-                $raw_content = preg_replace('/\[gn_photo_upload[^\]]*\]/', '', $raw_content);
-                $locations[] = [
-                    'id'          => get_the_ID(),
-                    'title'       => get_the_title(),
-                    'content'     => apply_filters('the_content', $raw_content),
-                    'image'       => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
-                    'gallery'     => $gallery,
-                    'upload_form' => do_shortcode('[gn_photo_upload location="' . get_the_ID() . '"]'),
-                    'lat'         => floatval($lat),
-                    'lng'         => floatval($lng),
-                    'waypoint'    => get_post_meta(get_the_ID(), '_gn_waypoint', true) === '1',
-                ];
-            }
-        }
-        wp_reset_postdata();
-
-        if (empty($locations)) {
-            $json_file = plugin_dir_path(__FILE__) . 'data/locations.json';
+        foreach ($files as $key => $json_file) {
             if (file_exists($json_file)) {
                 $json = file_get_contents($json_file);
                 $data = json_decode($json, true);
@@ -566,19 +523,15 @@ function gn_get_map_locations() {
                     foreach ($data as &$loc) {
                         $loc['waypoint'] = !empty($loc['waypoint']);
                     }
-                    $locations = $data;
+                    $locations[$key] = $data;
                     if ($debug_enabled) {
-                        error_log('Loaded ' . count($locations) . ' locations from JSON fallback');
+                        error_log('Loaded ' . count($data) . ' locations for ' . $key . ' from JSON fallback');
                     }
-                } else {
-                    if ($debug_enabled) {
-                        error_log('Failed to parse locations JSON');
-                    }
+                } elseif ($debug_enabled) {
+                    error_log('Failed to parse locations JSON for ' . $key);
                 }
-            } else {
-                if ($debug_enabled) {
-                    error_log('Fallback locations file not found');
-                }
+            } elseif ($debug_enabled) {
+                error_log('Fallback locations file not found for ' . $key);
             }
         }
     }

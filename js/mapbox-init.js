@@ -23,11 +23,12 @@
     let watchId;
     let trail = [];
     let isNavigating = false;
-    let currentRoute = 'default';
+    let currentRoute = 'path1';
     let currentElevation = 0;
     const defaultLang = localStorage.getItem("gn_voice_lang") || "el-GR";
     const routeSettings = {
-      default: { center: [32.474444, 34.923889], zoom: 16 },
+      path1: { center: [32.474444, 34.923889], zoom: 16 },
+      path2: { center: [32.474444, 34.923889], zoom: 16 },
       paphos: { center: [32.42293021940422, 34.774631500416966], zoom: 10 },
       airport: { center: [32.490296426999045, 34.70974769197728], zoom: 12 },
     };
@@ -135,7 +136,8 @@
         <div id="gn-nav-controls" style="padding: 6px; background: white;">
             <select id="gn-route-select" class="gn-nav-select">
               <option value="">Select Route</option>
-              <option value="default">Nature Paths</option>
+              <option value="path1">Διαδρομή 1</option>
+              <option value="path2">Διαδρομή 2</option>
               <option value="paphos">Paphos → Giolou</option>
               <option value="airport">Paphos Airport → Giolou</option>
             </select>
@@ -360,14 +362,12 @@
       selectRoute(currentRoute);
     }
   
-    async function showDefaultRoute() {
+    async function showNatureRoute(pathKey) {
       clearMap();
-      log('Showing default route');
-      coords = gnMapData.locations.map(loc => [loc.lng, loc.lat]);
-      if (coords.length !== 11) {
-        log('Expected 11 coordinates but got', coords.length);
-      }
-      gnMapData.locations.forEach(loc => {
+      log('Showing nature route', pathKey);
+      const locs = gnMapData.paths[pathKey] || [];
+      coords = locs.map(loc => [loc.lng, loc.lat]);
+      locs.forEach(loc => {
         const carouselHTML = loc.gallery && loc.gallery.length
           ? '<div class="gn-carousel">' +
             '<button class="gn-carousel-prev" aria-label="Prev">&#10094;</button>' +
@@ -411,7 +411,7 @@
         }
       });
       if (coords.length > 1) {
-        const stopIndexes = gnMapData.locations.reduce((arr, loc, i) => {
+        const stopIndexes = locs.reduce((arr, loc, i) => {
           if (!loc.waypoint) arr.push(i);
           return arr;
         }, []);
@@ -448,7 +448,7 @@
           }
           log('Route line drawn with', res.coordinates.length, 'points');
         } else {
-          log('No coordinates returned for default route');
+          log('No coordinates returned for nature route');
         }
       } else {
         log('Not enough coordinates for route line');
@@ -515,18 +515,17 @@
   
     function selectRoute(val) {
       log('Route selected:', val);
-      currentRoute = val || 'default';
+      currentRoute = val || 'path1';
       clearMap();
       if (!val) return;
       applyRouteSettings(val);
-      if (val === 'default') {
-        showDefaultRoute();
+      if (val === 'path1' || val === 'path2') {
+        showNatureRoute(val);
       } else if (val === 'paphos') {
         showDrivingRoute([32.42293021940422, 34.774631500416966], [32.4773453, 34.9220437]);
       } else if (val === 'airport') {
         showDrivingRoute([32.490296426999045, 34.70974769197728], [32.4773453, 34.9220437]);
       }
-      // Re-apply the center after controls adjust the map
       setTimeout(() => applyRouteSettings(val), 1000);
     }
   
@@ -790,8 +789,9 @@
         const destination = coords[coords.length - 1];
         const ordered = [userLngLat, ...waypoints, destination];
         const stopIndexes = [0];
-        if (currentRoute === 'default') {
-          gnMapData.locations.forEach((loc, i) => {
+        if (currentRoute === 'path1' || currentRoute === 'path2') {
+          const locs = gnMapData.paths[currentRoute] || [];
+          locs.forEach((loc, i) => {
             if (!loc.waypoint) stopIndexes.push(i + 1);
           });
         } else {
@@ -1010,8 +1010,8 @@
     map = new mapboxgl.Map({
       container: "gn-mapbox-map",
       style: "mapbox://styles/mapbox/satellite-streets-v11",
-      center: routeSettings.default.center,
-      zoom: routeSettings.default.zoom,
+      center: routeSettings.path1.center,
+      zoom: routeSettings.path1.zoom,
     });
   
     map.addControl(new mapboxgl.NavigationControl(), "top-left");
@@ -1024,8 +1024,8 @@
     map.on("load", () => {
       log("Map loaded");
       const routeSel = document.getElementById("gn-route-select");
-      if (routeSel) routeSel.value = "default";
-      selectRoute("default");
+      if (routeSel) routeSel.value = "path1";
+      selectRoute("path1");
     });
     };
   

@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Μουσείο/έκθεση φωτογραφίας",
+    "content": "",
+    "image": null,
+    "gallery": [],
+    "lat": 34.923889,
+    "lng": 32.474444
+  },
+  {
+    "title": "Θεοτοκούα",
+    "content": "",
+    "image": null,
+    "gallery": [],
+    "lat": 34.914444,
+    "lng": 32.481389
+  },
+  {
+    "title": "Αγιος Νήπιος",
+    "content": "",
+    "image": null,
+    "gallery": [],
+    "lat": 34.912222,
+    "lng": 32.4775
+  },
+  {
+    "title": "Αγιος Τρύφωνας",
+    "content": "",
+    "image": null,
+    "gallery": [],
+    "lat": 34.912222,
+    "lng": 32.467778
+  },
+  {
+    "title": "Κιοσκι",
+    "content": "",
+    "image": null,
+    "gallery": [],
+    "lat": 34.915556,
+    "lng": 32.4675
+  }
+]

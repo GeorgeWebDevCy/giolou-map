@@ -17,7 +17,7 @@ This WordPress plugin displays custom post type locations on a Mapbox map. It al
 - Service worker caches Mapbox tiles so viewed maps continue working offline.
 - Visitors can upload photos or videos from the front end; admins can approve or delete submissions before publishing.
 - Upload forms automatically appear in map popups and inside each location post.
-- Example locations from `data/locations.json` are imported if none exist.
+- Example locations from `data/nature-path-1.json` and `data/nature-path-2.json` are imported if none exist.
 - Built-in update checker fetches new versions directly from GitHub.
 - Ready for translation and WPML compatible.
 
@@ -28,6 +28,10 @@ This WordPress plugin displays custom post type locations on a Mapbox map. It al
 
 ## Usage
 Create `Map Location` posts with latitude and longitude fields and place the `[gn_map]` shortcode on any page.
+### 2.174.0
+- Split nature trail into two selectable routes
+- Bumped plugin version
+
 ### 2.173.0
 - Transition plugin for Giolou including shortcodes and default dataset
 - Bumped plugin version
@@ -312,14 +316,14 @@ After visitors submit photos or videos, they appear under **Media → Photo Appr
 
 ## Debugging
 Enable the **Debug Panel** setting under **Settings → GN Mapbox** to output detailed logs to the browser console and on-screen panel.
-Markers are logged in the order they appear in `data/locations.json`.
+Markers are logged in the order they appear in `data/nature-path-1.json` and `data/nature-path-2.json`.
 
 ## Offline Caching
 A service worker caches Mapbox tiles for offline use once a page has been loaded online. The map will then continue working with the cached tiles when the network is unavailable.
 
 ## Default Locations
 If no `Map Location` posts exist, the plugin imports the coordinates from
-`data/locations.json` into the custom post type. When the JSON fallback is used
+`data/nature-path-1.json` and `data/nature-path-2.json` into the custom post type. When the JSON fallback is used
 at runtime, those locations are also created as posts so all features keep
 working. Update this file to change the built-in locations.
 
@@ -570,7 +574,7 @@ working. Update this file to change the built-in locations.
 ### 2.8.0
 - Default locations are now imported as custom posts on activation if missing
 ### 2.7.1
-- Added fallback location dataset loaded from `data/locations.json`
+- Added fallback location dataset loaded from `data/nature-path-1.json` and `data/nature-path-2.json`
 ### 2.7.0
 - Added photo gallery support for locations
 
