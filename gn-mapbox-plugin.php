@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.177.4
+Version: 2.177.5
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -146,6 +146,26 @@ function gn_import_default_locations() {
         }
         update_post_meta($post_id, '_gn_path', $path_key === 'path2' ? '2' : '1');
         update_post_meta($post_id, '_gn_location_order', $index);
+
+        if (!empty($location['gallery']) && is_array($location['gallery'])) {
+          $ids = array_values(array_filter(array_map('intval', $location['gallery'])));
+          if ($ids) {
+            update_post_meta($post_id, '_gn_location_photos', implode(',', $ids));
+            foreach ($ids as $img_id) {
+              wp_update_post([
+                'ID'          => $img_id,
+                'post_parent' => $post_id,
+              ]);
+            }
+            if (!empty($location['image']) && is_numeric($location['image'])) {
+              set_post_thumbnail($post_id, intval($location['image']));
+            } else {
+              set_post_thumbnail($post_id, $ids[0]);
+            }
+          }
+        } elseif (!empty($location['image']) && is_numeric($location['image'])) {
+          set_post_thumbnail($post_id, intval($location['image']));
+        }
       }
     }
   }
