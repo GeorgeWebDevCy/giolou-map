@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.176.0
+Version: 2.177.0
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -100,54 +100,55 @@ function gn_location_exists($title, $lat = null, $lng = null) {
  * plugin is first installed.
  */
 function gn_import_default_locations() {
-    $files = [
-        plugin_dir_path(__FILE__) . 'data/nature-path-1.json',
-        plugin_dir_path(__FILE__) . 'data/nature-path-2.json',
-    ];
+  $files = [
+    'path1' => plugin_dir_path(__FILE__) . 'data/nature-path-1.json',
+    'path2' => plugin_dir_path(__FILE__) . 'data/nature-path-2.json',
+  ];
 
-    foreach ($files as $json_file) {
-        if (!file_exists($json_file)) {
-            continue;
-        }
-
-        $json = file_get_contents($json_file);
-        $locations = json_decode($json, true);
-        if (!is_array($locations)) {
-            continue;
-        }
-
-        foreach ($locations as $index => $location) {
-            if (empty($location['title'])) {
-                continue;
-            }
-
-            $lat = $location['lat'] ?? null;
-            $lng = $location['lng'] ?? null;
-            if (gn_location_exists($location['title'], $lat, $lng)) {
-                continue;
-            }
-
-            $post_id = wp_insert_post([
-                'post_title'   => wp_strip_all_tags($location['title']),
-                'post_content' => $location['content'] ?? '',
-                'post_status'  => 'publish',
-                'post_type'    => 'map_location',
-            ]);
-
-            if (!is_wp_error($post_id)) {
-                if (isset($location['lat'])) {
-                    update_post_meta($post_id, 'latitude', $location['lat']);
-                }
-                if (isset($location['lng'])) {
-                    update_post_meta($post_id, 'longitude', $location['lng']);
-                }
-                if (isset($location['waypoint'])) {
-                    update_post_meta($post_id, '_gn_waypoint', $location['waypoint'] ? '1' : '');
-                }
-                update_post_meta($post_id, '_gn_location_order', $index);
-            }
-        }
+  foreach ($files as $path_key => $json_file) {
+    if (!file_exists($json_file)) {
+      continue;
     }
+
+    $json = file_get_contents($json_file);
+    $locations = json_decode($json, true);
+    if (!is_array($locations)) {
+      continue;
+    }
+
+    foreach ($locations as $index => $location) {
+      if (empty($location['title'])) {
+        continue;
+      }
+
+      $lat = $location['lat'] ?? null;
+      $lng = $location['lng'] ?? null;
+      if (gn_location_exists($location['title'], $lat, $lng)) {
+        continue;
+      }
+
+      $post_id = wp_insert_post([
+        'post_title'   => wp_strip_all_tags($location['title']),
+        'post_content' => $location['content'] ?? '',
+        'post_status'  => 'publish',
+        'post_type'    => 'map_location',
+      ]);
+
+      if (!is_wp_error($post_id)) {
+        if (isset($location['lat'])) {
+          update_post_meta($post_id, 'latitude', $location['lat']);
+        }
+        if (isset($location['lng'])) {
+          update_post_meta($post_id, 'longitude', $location['lng']);
+        }
+        if (isset($location['waypoint'])) {
+          update_post_meta($post_id, '_gn_waypoint', $location['waypoint'] ? '1' : '');
+        }
+        update_post_meta($post_id, '_gn_path', $path_key === 'path2' ? '2' : '1');
+        update_post_meta($post_id, '_gn_location_order', $index);
+      }
+    }
+  }
 }
 
 /**
