@@ -22,9 +22,9 @@ The shortcode for Paphos airport directions registers `gn_mapbox_paphos_airport`
 
 Relevant snippet:
 ```
-1070  // Paphos Airport to Drouseia
-1071  function gn_mapbox_paphos_to_airport_shortcode() {
 ...
 1105  add_shortcode('gn_mapbox_paphos_airport', 'gn_mapbox_paphos_to_airport_shortcode');
 ```
-The function name suggests a route from Paphos to the airport, while the comment and logic actually plot a route **from the airport to Drouseia**.
+1070  // Paphos Airport to Giolou
+1071  function gn_mapbox_paphos_to_airport_shortcode() {
+The function name suggests a route from Paphos to the airport, while the comment and logic actually plot a route **from the airport to Giolou**.

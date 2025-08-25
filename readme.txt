@@ -3,7 +3,7 @@ Contributors: georgewebdev
 Tags: mapbox,acf,locations,map
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 2.172.0
+Stable tag: 2.173.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,8 +15,8 @@ GN Mapbox Locations with ACF creates a **Map Location** post type for storing co
 == Features ==
 * "Map Location" custom post type storing coordinates, descriptions and galleries.
 * `[gn_map]` shortcode embeds an interactive Mapbox map anywhere.
-* `[gn_mapbox_drouseia]` shortcode displays a map of Drouseia with a marker and red boundary line around the village.
-* `[gn_mapbox_drousia_paphos]`, `[gn_mapbox_drousia_polis]` and `[gn_mapbox_paphos_airport]` show driving directions between key locations.
+* `[gn_mapbox_giolou]` shortcode displays a map of Giolou with a marker and red boundary line around the village.
+* `[gn_mapbox_giolou_paphos]` and `[gn_mapbox_paphos_airport]` show driving directions between key locations.
 * Responsive popups show images, descriptions and a media upload form.
 * Gallery items open in a lightbox and scale to any screen.
 * Draggable navigation panel for driving, walking or cycling directions with voice guidance.
@@ -40,6 +40,9 @@ Enable the Debug Panel option in **Settings → GN Mapbox** to output verbose lo
 Markers are logged in the order they appear in `data/locations.json`.
 
 == Changelog ==
+= 2.173.0 =
+* Transition plugin for Giolou including shortcodes and default dataset
+* Bumped plugin version
 = 2.172.0 =
 * Fix tracker icon not showing in navigation mode by using Mapbox Maki icons for different navigation modes (car, bicycle and pedestrian)
 * Bumped plugin version
@@ -142,14 +145,14 @@ Markers are logged in the order they appear in `data/locations.json`.
 = 2.57.0 =
 * Terrain style enabled for all maps
 = 2.56.0 =
-* `[gn_mapbox_drouseia_100]` height set to 480px
+* `[gn_mapbox_giolou_100]` height set to 480px
 
 = 2.55.0 =
 * Allow multiple file uploads when submitting media to locations
-* `[gn_mapbox_drouseia_100]` map now fills the entire viewport
+* `[gn_mapbox_giolou_100]` map now fills the entire viewport
 = 2.54.0 =
-* Terrain map style for `[gn_mapbox_drouseia]` and new `[gn_mapbox_drouseia_100]`
-* Added `[gn_mapbox_drouseia_100]` shortcode for a full-width map
+* Terrain map style for `[gn_mapbox_giolou]` and new `[gn_mapbox_giolou_100]`
+* Added `[gn_mapbox_giolou_100]` shortcode for a full-width map
 = 2.53.0 =
 * Added console log when the route line is drawn
 * Map recenters when changing routes
@@ -177,29 +180,29 @@ Markers are logged in the order they appear in `data/locations.json`.
 = 2.42.0 =
 * Graceful message displayed when the Mapbox access token is missing
 = 2.41.0 =
-* Driving direction shortcodes `[gn_mapbox_drousia_paphos]`, `[gn_mapbox_drousia_polis]` and `[gn_mapbox_paphos_airport]`
+* Driving direction shortcodes `[gn_mapbox_giolou_paphos]` and `[gn_mapbox_paphos_airport]`
 = 2.40.0 =
-* Map zooms in two levels and centers on Drouseia in `[gn_mapbox_drouseia]`
+* Map zooms in two levels and centers on Giolou in `[gn_mapbox_giolou]`
 = 2.39.0 =
-* Map zooms out four levels and centers on Drouseia in `[gn_mapbox_drouseia]`
+* Map zooms out four levels and centers on Giolou in `[gn_mapbox_giolou]`
 = 2.38.0 =
-* Google-like map style and improved polygon with closer zoom on `[gn_mapbox_drouseia]`
+* Google-like map style and improved polygon with closer zoom on `[gn_mapbox_giolou]`
 = 2.37.0 =
-* Polygon boundary around the village with a closer zoom on `[gn_mapbox_drouseia]`
+* Polygon boundary around the village with a closer zoom on `[gn_mapbox_giolou]`
 = 2.36.0 =
-* Smoother boundary circle with updated coordinates and zoom on `[gn_mapbox_drouseia]`
+* Smoother boundary circle with updated coordinates and zoom on `[gn_mapbox_giolou]`
 = 2.35.0 =
-* Wider circular boundary on `[gn_mapbox_drouseia]` map and adjusted zoom
+* Wider circular boundary on `[gn_mapbox_giolou]` map and adjusted zoom
 = 2.34.0 =
-* Boundary line on `[gn_mapbox_drouseia]` is now circular
+* Boundary line on `[gn_mapbox_giolou]` is now circular
 = 2.33.0 =
 * Version bump for release consistency
 = 2.32.0 =
-* Drouseia boundary line styled like Google Maps
+* Giolou boundary line styled like Google Maps
 = 2.31.0 =
-* Drouseia map now draws an outline polygon around the village
+* Giolou map now draws an outline polygon around the village
 = 2.30.0 =
-* Added `[gn_mapbox_drouseia]` shortcode displaying a simple map of Drouseia
+* Added `[gn_mapbox_giolou]` shortcode displaying a simple map of Giolou
 = 2.29.0 =
 * Support more than 25 coordinates by chunking Directions API requests
 = 2.28.0 =
@@ -211,7 +214,7 @@ Markers are logged in the order they appear in `data/locations.json`.
 * `[gn_village_map]` shortcode now displays only the village boundary
 
 = 2.25.0 =
-* Added `[gn_village_map]` shortcode displaying Drouseia boundary and labelled markers
+* Added `[gn_village_map]` shortcode displaying Giolou boundary and labelled markers
 * Custom icons or Maki symbols show hotels, taverns and villas in Greek and English
 * Zoom controls allow full interactivity
 = 2.24.3 =

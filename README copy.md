@@ -5,8 +5,8 @@ This WordPress plugin displays custom post type locations on a Mapbox map. It al
 ## Features
  - "Map Location" custom post type stores coordinates, descriptions and unlimited gallery media.
 - `[gn_map]` shortcode embeds a fully interactive Mapbox map anywhere on your site.
-- `[gn_mapbox_drouseia]` shortcode shows Drouseia with a marker and red boundary line around the village.
-- `[gn_mapbox_drousia_paphos]`, `[gn_mapbox_drousia_polis]` and `[gn_mapbox_paphos_airport]` provide driving directions between popular destinations.
+- `[gn_mapbox_giolou]` shortcode shows Giolou with a marker and red boundary line around the village.
+- `[gn_mapbox_giolou_paphos]` and `[gn_mapbox_paphos_airport]` provide driving directions between popular destinations.
  - Responsive popups display images, descriptions and media upload forms.
  - Gallery items open in a lightbox that scales beautifully on all devices.
 - Draggable navigation panel offers driving, walking and cycling directions with voice guidance.
@@ -28,6 +28,9 @@ This WordPress plugin displays custom post type locations on a Mapbox map. It al
 
 ## Usage
 Create `Map Location` posts with latitude and longitude fields and place the `[gn_map]` shortcode on any page.
+### 2.173.0
+- Transition plugin for Giolou including shortcodes and default dataset
+- Bumped plugin version
 ### 2.172.0
 - Fix tracker icon not showing in navigation mode by using Mapbox Maki icons for different navigation modes (car, bicycle and pedestrian)
 - Bumped plugin version
@@ -104,11 +107,11 @@ Create `Map Location` posts with latitude and longitude fields and place the `[g
 - Updated route line color and navigation panel layout
 
 ### 2.142.3
-- Fixed coordinates for Paphos, Polis and airport driving routes
+- Fixed coordinates for Paphos, Giolou and airport driving routes
 
 ### 2.142.2
-- Updated route labels to direct visitors toward Drouseia
-- Reversed driving routes for Paphos, Polis and the airport
+- Updated route labels to direct visitors toward Giolou
+- Reversed driving routes for Paphos, Giolou and the airport
 ### 2.142.0
 - Reverted plugin to version 2.134.0 state
 
@@ -162,7 +165,7 @@ Create `Map Location` posts with latitude and longitude fields and place the `[g
 ### 2.106.0
 - Add waypoints to ensure right turn from start
 ### 2.104.0
-- Fixed coordinates for multiple Beloa locations in Drousia
+- Fixed coordinates for multiple Beloa locations in Giolou
 
 ### 2.102.0
 - Repositioned Οικισμός Πιττοκόπος near the main road at 34.97415, 32.38285
@@ -174,10 +177,10 @@ Create `Map Location` posts with latitude and longitude fields and place the `[g
 - Repositioned Βολατζιές closer to the main road
 
 ### 2.99.0
-- Repositioned three locations along the main road near Drouseia
+- Repositioned three locations along the main road near Giolou
 
 ### 2.98.0
-- Repositioned three locations along the main road near Drousia
+- Repositioned three locations along the main road near Giolou
 
 ### 2.97.0
 - Repositioned three locations along the main road
@@ -253,14 +256,14 @@ Create `Map Location` posts with latitude and longitude fields and place the `[g
 ### 2.57.0
 - Terrain style enabled for all maps
 ### 2.56.0
-- `[gn_mapbox_drouseia_100]` height set to 480px
+- `[gn_mapbox_giolou_100]` height set to 480px
 ### 2.55.0
 - Allow multiple file uploads when submitting media to locations
 
-- `[gn_mapbox_drouseia_100]` map fills the entire viewport
+- `[gn_mapbox_giolou_100]` map fills the entire viewport
 ### 2.54.0
-- Terrain map style for `[gn_mapbox_drouseia]` and new `[gn_mapbox_drouseia_100]`
-- Added `[gn_mapbox_drouseia_100]` shortcode for a full-width map
+- Terrain map style for `[gn_mapbox_giolou]` and new `[gn_mapbox_giolou_100]`
+- Added `[gn_mapbox_giolou_100]` shortcode for a full-width map
 ### 2.53.0
 - Added console log when the route line is drawn
 - Map recenters when changing routes
@@ -287,22 +290,22 @@ Create `Map Location` posts with latitude and longitude fields and place the `[g
 ### 2.42.0
 - Graceful message shown when the Mapbox access token is missing
 ### 2.41.0
-- Driving direction shortcodes `[gn_mapbox_drousia_paphos]`, `[gn_mapbox_drousia_polis]` and `[gn_mapbox_paphos_airport]`
+- Driving direction shortcodes `[gn_mapbox_giolou_paphos]` and `[gn_mapbox_paphos_airport]`
 ### 2.40.0
-- `[gn_mapbox_drouseia]` zooms in two levels and centers on Drouseia
+- `[gn_mapbox_giolou]` zooms in two levels and centers on Giolou
 ### 2.38.0
-- `[gn_mapbox_drouseia]` uses a Google-like map style, refined polygon boundary and a closer zoom
+- `[gn_mapbox_giolou]` uses a Google-like map style, refined polygon boundary and a closer zoom
 ### 2.37.0
-- `[gn_mapbox_drouseia]` now draws a polygon boundary around the village and zooms in closer
+- `[gn_mapbox_giolou]` now draws a polygon boundary around the village and zooms in closer
 ### 2.36.0
-- `[gn_mapbox_drouseia]` uses updated coordinates and smoother circle
+- `[gn_mapbox_giolou]` uses updated coordinates and smoother circle
 ### 2.35.0
-- Wider circular boundary and zoom level adjusted on `[gn_mapbox_drouseia]`
+- Wider circular boundary and zoom level adjusted on `[gn_mapbox_giolou]`
 ### 2.34.0
-- `[gn_mapbox_drouseia]` boundary line is now drawn as a smooth circle
+- `[gn_mapbox_giolou]` boundary line is now drawn as a smooth circle
 ### 2.33.0
 - Version bump for release consistency
-Use the `[gn_mapbox_drouseia]` shortcode to show a standalone map with Drouseia's marker and red boundary line.
+Use the `[gn_mapbox_giolou]` shortcode to show a standalone map with Giolou's marker and red boundary line.
 
 ## Approving Uploaded Media
 After visitors submit photos or videos, they appear under **Media → Photo Approvals** in the WordPress admin. Review each item and either **Approve** it to publish in the location gallery or **Delete** it permanently.
@@ -330,7 +333,7 @@ working. Update this file to change the built-in locations.
 ### 2.106.0
 - Add waypoints to ensure right turn from start
 ### 2.104.0
-- Fixed coordinates for multiple Beloa locations in Drousia
+- Fixed coordinates for multiple Beloa locations in Giolou
 ### 2.102.0
 - Repositioned Οικισμός Πιττοκόπος near the main road at 34.97415, 32.38285
 ### 2.101.0
@@ -339,10 +342,10 @@ working. Update this file to change the built-in locations.
 - Repositioned Βολατζιές closer to the main road
 
 ### 2.99.0
-- Repositioned three locations along the main road near Drouseia
+- Repositioned three locations along the main road near Giolou
 
 ### 2.98.0
-- Repositioned three locations along the main road near Drousia
+- Repositioned three locations along the main road near Giolou
 
 ### 2.97.0
 - Repositioned three locations for better road accuracy
@@ -422,15 +425,15 @@ working. Update this file to change the built-in locations.
 - Terrain style enabled for all maps
 ### 2.56.0
 
-- `[gn_mapbox_drouseia_100]` height set to 480px
+- `[gn_mapbox_giolou_100]` height set to 480px
 ### 2.55.0
 
 - Allow multiple file uploads when submitting media to locations
-- `[gn_mapbox_drouseia_100]` map fills the entire viewport
+- `[gn_mapbox_giolou_100]` map fills the entire viewport
 ### 2.54.0
 
-- Terrain map style for `[gn_mapbox_drouseia]` and new `[gn_mapbox_drouseia_100]`
-- Added `[gn_mapbox_drouseia_100]` shortcode for a full-width map
+- Terrain map style for `[gn_mapbox_giolou]` and new `[gn_mapbox_giolou_100]`
+- Added `[gn_mapbox_giolou_100]` shortcode for a full-width map
 ### 2.53.0
 - Added console log when the route line is drawn
 - Map recenters when changing routes
@@ -457,27 +460,27 @@ working. Update this file to change the built-in locations.
 ### 2.42.0
 - Graceful message shown when the Mapbox access token is missing
 ### 2.41.0
-- Driving direction shortcodes `[gn_mapbox_drousia_paphos]`, `[gn_mapbox_drousia_polis]` and `[gn_mapbox_paphos_airport]`
+- Driving direction shortcodes `[gn_mapbox_giolou_paphos]` and `[gn_mapbox_paphos_airport]`
 ### 2.40.0
-- Map zooms in two levels and centers on Drouseia for `[gn_mapbox_drouseia]`
+- Map zooms in two levels and centers on Giolou for `[gn_mapbox_giolou]`
 ### 2.39.0
-- Map zooms out four levels and centers on Drouseia for `[gn_mapbox_drouseia]`
+- Map zooms out four levels and centers on Giolou for `[gn_mapbox_giolou]`
 ### 2.38.0
-- Navigation-day map style and improved polygon on `[gn_mapbox_drouseia]`
+- Navigation-day map style and improved polygon on `[gn_mapbox_giolou]`
 ### 2.37.0
-- Polygon boundary around Drouseia with closer zoom on `[gn_mapbox_drouseia]`
+- Polygon boundary around Giolou with closer zoom on `[gn_mapbox_giolou]`
 ### 2.36.0
-- Smoother circular boundary with corrected center and zoom on `[gn_mapbox_drouseia]`
+- Smoother circular boundary with corrected center and zoom on `[gn_mapbox_giolou]`
 ### 2.35.0
-- Wider boundary circle and adjusted zoom on `[gn_mapbox_drouseia]`
+- Wider boundary circle and adjusted zoom on `[gn_mapbox_giolou]`
 ### 2.34.0
-- More circular boundary line on `[gn_mapbox_drouseia]` map
+- More circular boundary line on `[gn_mapbox_giolou]` map
 ### 2.32.0
-- Drouseia map boundary styled like Google Maps
+- Giolou map boundary styled like Google Maps
 ### 2.31.0
-- Drouseia map now draws an outline polygon around the village
+- Giolou map now draws an outline polygon around the village
 ### 2.30.0
-- Added `[gn_mapbox_drouseia]` shortcode for a simple map of Drouseia
+- Added `[gn_mapbox_giolou]` shortcode for a simple map of Giolou
 ### 2.29.0
 - Support more than 25 coordinates by chunking Directions API requests
 ### 2.28.0

@@ -27,9 +27,8 @@
     let currentElevation = 0;
     const defaultLang = localStorage.getItem("gn_voice_lang") || "el-GR";
     const routeSettings = {
-      default: { center: [32.3923713, 34.96211], zoom: 16 },
+      default: { center: [32.474444, 34.923889], zoom: 16 },
       paphos: { center: [32.42293021940422, 34.774631500416966], zoom: 10 },
-      polis: { center: [32.425647063063586, 35.03373715925951], zoom: 11 },
       airport: { center: [32.490296426999045, 34.70974769197728], zoom: 12 },
     };
   
@@ -136,10 +135,9 @@
         <div id="gn-nav-controls" style="padding: 6px; background: white;">
             <select id="gn-route-select" class="gn-nav-select">
               <option value="">Select Route</option>
-              <option value="default">Nature Path</option>
-              <option value="paphos">Paphos → Drouseia</option>
-              <option value="polis">Polis → Drouseia</option>
-              <option value="airport">Paphos Airport → Drouseia</option>
+              <option value="default">Nature Paths</option>
+              <option value="paphos">Paphos → Giolou</option>
+              <option value="airport">Paphos Airport → Giolou</option>
             </select>
             <select id="gn-mode-select" class="gn-nav-select">
               <option value="driving" title="Driving">🚗 Driving</option>
@@ -366,8 +364,8 @@
       clearMap();
       log('Showing default route');
       coords = gnMapData.locations.map(loc => [loc.lng, loc.lat]);
-      if (coords.length !== 15) {
-        log('Expected 15 coordinates but got', coords.length);
+      if (coords.length !== 11) {
+        log('Expected 11 coordinates but got', coords.length);
       }
       gnMapData.locations.forEach(loc => {
         const carouselHTML = loc.gallery && loc.gallery.length
@@ -524,11 +522,9 @@
       if (val === 'default') {
         showDefaultRoute();
       } else if (val === 'paphos') {
-        showDrivingRoute([32.42293021940422, 34.774631500416966], [32.397643, 34.959782]);
-      } else if (val === 'polis') {
-        showDrivingRoute([32.425647063063586, 35.03373715925951], [32.397643, 34.959782]);
+        showDrivingRoute([32.42293021940422, 34.774631500416966], [32.4773453, 34.9220437]);
       } else if (val === 'airport') {
-        showDrivingRoute([32.490296426999045, 34.70974769197728], [32.397643, 34.959782]);
+        showDrivingRoute([32.490296426999045, 34.70974769197728], [32.4773453, 34.9220437]);
       }
       // Re-apply the center after controls adjust the map
       setTimeout(() => applyRouteSettings(val), 1000);
