@@ -3,7 +3,7 @@ Contributors: georgewebdev
 Tags: mapbox,acf,locations,map
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 2.177.3
+Stable tag: 2.177.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,11 @@ Enable the Debug Panel option in **Settings → GN Mapbox** to output verbose lo
 Markers are logged in the order they appear in `data/nature-path-1.json` and `data/nature-path-2.json`.
 
 == Changelog ==
+= 2.177.4 =
+* Add gallery images for nature path locations
+* Correct Θεοτοκούσα name
+* Document earlier merges
+* Bumped plugin version
 = 2.177.3 =
 * Add descriptions for points of interest on both nature paths
 * Bumped plugin version
