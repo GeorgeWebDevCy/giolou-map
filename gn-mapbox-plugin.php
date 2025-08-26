@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.177.6
+Version: 2.177.7
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -982,6 +982,118 @@ function gn_mapbox_giolou_100_shortcode() {
     return ob_get_clean();
 }
 add_shortcode('gn_mapbox_giolou_100', 'gn_mapbox_giolou_100_shortcode');
+
+/**
+ * Display map for Το Παλάτι restaurant.
+ * Usage: [gn_mapbox_palati]
+ */
+function gn_mapbox_palati_shortcode() {
+    $token = get_option('gn_mapbox_token');
+    if (!$token) {
+        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+    }
+    ob_start();
+    ?>
+    <div id="gn-mapbox-palati" style="width:100%;height:400px;"></div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script>
+      mapboxgl.accessToken = '<?php echo esc_js($token); ?>';
+      const palatiMap = new mapboxgl.Map({
+        container: 'gn-mapbox-palati',
+        style: 'mapbox://styles/mapbox/satellite-streets-v11',
+        center: [32.473355, 34.925029],
+        zoom: 18
+      });
+      new mapboxgl.Marker()
+        .setLngLat([32.473355, 34.925029])
+        .setPopup(new mapboxgl.Popup().setText('Το Παλάτι'))
+        .addTo(palatiMap);
+    </script>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('gn_mapbox_palati', 'gn_mapbox_palati_shortcode');
+
+/**
+ * Display map for Kokos Coffee using Mapbox geocoding.
+ * Usage: [gn_mapbox_kokos_coffee]
+ */
+function gn_mapbox_kokos_coffee_shortcode() {
+    $token = get_option('gn_mapbox_token');
+    if (!$token) {
+        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+    }
+    ob_start();
+    ?>
+    <div id="gn-mapbox-kokos-coffee" style="width:100%;height:400px;"></div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script>
+      mapboxgl.accessToken = '<?php echo esc_js($token); ?>';
+      const kokosMap = new mapboxgl.Map({
+        container: 'gn-mapbox-kokos-coffee',
+        style: 'mapbox://styles/mapbox/satellite-streets-v11',
+        center: [32.4773453, 34.9220437],
+        zoom: 18
+      });
+      fetch('https://api.mapbox.com/geocoding/v5/mapbox.places/' + encodeURIComponent('Kokos Coffee Giolou') + '.json?access_token=' + mapboxgl.accessToken)
+        .then(response => response.json())
+        .then(data => {
+          if (data.features && data.features.length) {
+            const [lng, lat] = data.features[0].center;
+            kokosMap.setCenter([lng, lat]);
+            new mapboxgl.Marker()
+              .setLngLat([lng, lat])
+              .setPopup(new mapboxgl.Popup().setText('Kokos Coffee'))
+              .addTo(kokosMap);
+          }
+        });
+    </script>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('gn_mapbox_kokos_coffee', 'gn_mapbox_kokos_coffee_shortcode');
+
+/**
+ * Display map for Coffee Rooster using Mapbox geocoding.
+ * Usage: [gn_mapbox_coffee_rooster]
+ */
+function gn_mapbox_coffee_rooster_shortcode() {
+    $token = get_option('gn_mapbox_token');
+    if (!$token) {
+        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+    }
+    ob_start();
+    ?>
+    <div id="gn-mapbox-coffee-rooster" style="width:100%;height:400px;"></div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script>
+      mapboxgl.accessToken = '<?php echo esc_js($token); ?>';
+      const roosterMap = new mapboxgl.Map({
+        container: 'gn-mapbox-coffee-rooster',
+        style: 'mapbox://styles/mapbox/satellite-streets-v11',
+        center: [32.4773453, 34.9220437],
+        zoom: 18
+      });
+      fetch('https://api.mapbox.com/geocoding/v5/mapbox.places/' + encodeURIComponent('Coffee Rooster Giolou') + '.json?access_token=' + mapboxgl.accessToken)
+        .then(response => response.json())
+        .then(data => {
+          if (data.features && data.features.length) {
+            const [lng, lat] = data.features[0].center;
+            roosterMap.setCenter([lng, lat]);
+            new mapboxgl.Marker()
+              .setLngLat([lng, lat])
+              .setPopup(new mapboxgl.Popup().setText('Coffee Rooster'))
+              .addTo(roosterMap);
+          }
+        });
+    </script>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('gn_mapbox_coffee_rooster', 'gn_mapbox_coffee_rooster_shortcode');
 
 // Paphos to Giolou
 function gn_mapbox_giolou_to_paphos_shortcode() {

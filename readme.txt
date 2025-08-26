@@ -3,7 +3,7 @@ Contributors: georgewebdev
 Tags: mapbox,acf,locations,map
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 2.177.6
+Stable tag: 2.177.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,9 @@ Enable the Debug Panel option in **Settings → GN Mapbox** to output verbose lo
 Markers are logged in the order they appear in `data/nature-path-1.json` and `data/nature-path-2.json`.
 
 == Changelog ==
+= 2.177.7 =
+* Add `[gn_mapbox_palati]`, `[gn_mapbox_kokos_coffee]` and `[gn_mapbox_coffee_rooster]` shortcodes
+* Bumped plugin version
 = 2.177.6 =
 * Exclude featured image from gallery output to avoid duplicates
 * Bumped plugin version

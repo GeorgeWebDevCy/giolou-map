@@ -7,6 +7,7 @@ This WordPress plugin displays custom post type locations on a Mapbox map. It al
 - `[gn_map]` shortcode embeds a fully interactive Mapbox map anywhere on your site.
 - `[gn_mapbox_giolou]` shortcode shows Giolou with a marker and red boundary line around the village.
 - `[gn_mapbox_giolou_paphos]` and `[gn_mapbox_paphos_airport]` provide driving directions between popular destinations.
+- `[gn_mapbox_palati]`, `[gn_mapbox_kokos_coffee]` and `[gn_mapbox_coffee_rooster]` show maps of local cafés.
  - Responsive popups display images, descriptions and media upload forms.
  - Gallery items open in a lightbox that scales beautifully on all devices.
 - Draggable navigation panel offers driving, walking and cycling directions with voice guidance.
@@ -28,6 +29,9 @@ This WordPress plugin displays custom post type locations on a Mapbox map. It al
 
 ## Usage
 Create `Map Location` posts with latitude and longitude fields and place the `[gn_map]` shortcode on any page.
+### 2.177.7
+- Add shortcodes `[gn_mapbox_palati]`, `[gn_mapbox_kokos_coffee]` and `[gn_mapbox_coffee_rooster]`
+- Bumped plugin version
 ### 2.177.6
 - Exclude featured image from gallery output to avoid duplicates
 - Bumped plugin version
