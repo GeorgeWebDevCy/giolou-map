@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.177.7
+Version: 2.177.8
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -459,6 +459,13 @@ function gn_enqueue_mapbox_assets() {
         'paths'       => gn_get_map_locations(),
         'debug'       => get_option('gn_mapbox_debug') === '1',
         'swPath'      => home_url('/?gn_map_sw=1'),
+        'routeNames'  => [
+            'select' => __('Επιλέξτε διαδρομή', 'gn-mapbox'),
+            'path1'  => __('Μονοπάτι 1', 'gn-mapbox'),
+            'path2'  => __('Μονοπάτι 2', 'gn-mapbox'),
+            'paphos' => __('Paphos → Giolou', 'gn-mapbox'),
+            'airport' => __('Paphos Airport → Giolou', 'gn-mapbox'),
+        ],
     ]);
     wp_localize_script('gn-photo-upload', 'gnPhotoData', [
         'debug' => get_option('gn_mapbox_debug') === '1'

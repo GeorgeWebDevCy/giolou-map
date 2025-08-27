@@ -135,11 +135,11 @@
         </div>
         <div id="gn-nav-controls" style="padding: 6px; background: white;">
             <select id="gn-route-select" class="gn-nav-select">
-              <option value="">Select Route</option>
-              <option value="path1">Path 1</option>
-              <option value="path2">Path 2</option>
-              <option value="paphos">Paphos → Giolou</option>
-              <option value="airport">Paphos Airport → Giolou</option>
+              <option value="">${gnMapData.routeNames.select}</option>
+              <option value="path1">${gnMapData.routeNames.path1}</option>
+              <option value="path2">${gnMapData.routeNames.path2}</option>
+              <option value="paphos">${gnMapData.routeNames.paphos}</option>
+              <option value="airport">${gnMapData.routeNames.airport}</option>
             </select>
             <select id="gn-mode-select" class="gn-nav-select">
               <option value="driving" title="Driving">🚗 Driving</option>
