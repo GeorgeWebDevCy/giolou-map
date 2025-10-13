@@ -101,7 +101,7 @@
       `;
   
       const clearBtn = document.createElement("button");
-      clearBtn.textContent = "Clear";
+      clearBtn.textContent = "Καθαρισμός";
       clearBtn.style.cssText = `
         display: block;
         margin-bottom: 10px;
@@ -130,28 +130,28 @@
       navPanel.id = "gn-nav-panel";
       navPanel.innerHTML = `
         <div style="cursor: move; background: #002d44; color: #fff; padding: 4px; font-size:13px; border-radius:8px 8px 0 0;">
-          ☰ Navigation
+          ☰ Πλοήγηση
           <button id="gn-close-nav" style="float:right;background:none;border:none;color:#fff;font-size:16px;cursor:pointer">×</button>
         </div>
         <div id="gn-nav-controls" style="padding: 6px; background: white;">
             <select id="gn-route-select" class="gn-nav-select">
-              <option value="">Select Route</option>
-              <option value="path1">Path 1</option>
-              <option value="path2">Path 2</option>
-              <option value="paphos">Paphos → Giolou</option>
-              <option value="airport">Paphos Airport → Giolou</option>
+              <option value="">Επιλέξτε Διαδρομή</option>
+              <option value="path1">Διαδρομή 1</option>
+              <option value="path2">Διαδρομή 2</option>
+              <option value="paphos">Πάφος → Γιόλου</option>
+              <option value="airport">Αεροδρόμιο Πάφου → Γιόλου</option>
             </select>
             <select id="gn-mode-select" class="gn-nav-select">
-              <option value="driving" title="Driving">🚗 Driving</option>
-              <option value="walking" title="Walking">🚶 Walking</option>
-              <option value="cycling" title="Cycling">🚲 Cycling</option>
+              <option value="driving" title="Οδήγηση">🚗 Οδήγηση</option>
+              <option value="walking" title="Πεζοπορία">🚶 Πεζοπορία</option>
+              <option value="cycling" title="Ποδηλασία">🚲 Ποδηλασία</option>
             </select>
             <select id="gn-language-select" class="gn-nav-select">
-              <option value="en-US" title="English">🇬🇧 English</option>
+              <option value="en-US" title="Αγγλικά">🇬🇧 Αγγλικά</option>
               <option value="el-GR" title="Ελληνικά">🇬🇷 Ελληνικά</option>
             </select>
             <div id="gn-distance-panel" style="font-size:12px;margin-bottom:4px;"></div>
-            <button class="gn-nav-btn" id="gn-nav-toggle" title="Start Navigation">▶ Start Navigation</button>
+            <button class="gn-nav-btn" id="gn-nav-toggle" title="Έναρξη Πλοήγησης">▶ Έναρξη Πλοήγησης</button>
         </div>
       `;
       navPanel.style.cssText = `
@@ -236,15 +236,15 @@
     function addVoiceToggleButton() {
       const btn = document.createElement("button");
       btn.id = "gn-voice-toggle";
-      btn.title = "Toggle Voice";
-      btn.textContent = localStorage.getItem("gn_voice_muted") === "true" ? "🔊 Unmute Directions" : "🔇 Mute Directions";
+      btn.title = "Εναλλαγή Φωνής";
+      btn.textContent = localStorage.getItem("gn_voice_muted") === "true" ? "🔊 Ενεργοποίηση Φωνητικής Πλοήγησης" : "🔇 Σίγαση Φωνητικής Πλοήγησης";
       btn.className = "gn-nav-btn";
   
       btn.onclick = () => {
         const wasMuted = localStorage.getItem("gn_voice_muted") === "true";
         const nowMuted = !wasMuted;
         localStorage.setItem("gn_voice_muted", nowMuted);
-        btn.textContent = nowMuted ? "🔊 Unmute Directions" : "🔇 Mute Directions";
+        btn.textContent = nowMuted ? "🔊 Ενεργοποίηση Φωνητικής Πλοήγησης" : "🔇 Σίγαση Φωνητικής Πλοήγησης";
         if (wasMuted && window.speechSynthesis) {
           // voice was muted and is now unmuted
           // nothing to cancel
@@ -354,7 +354,7 @@
       trail = [];
       isNavigating = false;
       const btn = document.getElementById('gn-nav-toggle');
-      if (btn) btn.textContent = '▶ Start Navigation';
+      if (btn) btn.textContent = '▶ Έναρξη Πλοήγησης';
     }
   
     function stopNavigation() {
@@ -370,7 +370,7 @@
       locs.forEach(loc => {
         const carouselHTML = loc.gallery && loc.gallery.length
           ? '<div class="gn-carousel">' +
-            '<button class="gn-carousel-prev" aria-label="Prev">&#10094;</button>' +
+            '<button class="gn-carousel-prev" aria-label="Προηγούμενο">&#10094;</button>' +
             '<div class="gn-carousel-track">' +
             loc.gallery.map(item =>
               `<div class="gn-slide">${item.type === 'video'
@@ -378,7 +378,7 @@
                 : `<img src="${item.url}" alt="${loc.title}">`}</div>`
             ).join('') +
             '</div>' +
-            '<button class="gn-carousel-next" aria-label="Next">&#10095;</button>' +
+            '<button class="gn-carousel-next" aria-label="Επόμενο">&#10095;</button>' +
             '</div>'
           : '';
         const uploadHTML = loc.upload_form ? `<div class="gn-upload-form">${loc.upload_form}</div>` : '';
@@ -386,7 +386,7 @@
           <div class="popup-content">
             <h3>${loc.title}</h3>
             ${loc.image ? `<img src="${loc.image}" alt="${loc.title}">` : ''}
-            <div class="gn-desc-label">Description &raquo;</div>
+            <div class="gn-desc-label">Περιγραφή &raquo;</div>
             <div class="gn-desc-content">${loc.content}</div>
             ${carouselHTML}
             ${uploadHTML}
@@ -442,7 +442,7 @@
           if (panel) {
             const km = (res.distance / 1000).toFixed(2);
             const mins = Math.ceil(res.duration / 60);
-            panel.innerHTML = `Distance: ${km} km<br>Time: ${mins} min<br>Elevation: ${Math.round(
+            panel.innerHTML = `Απόσταση: ${km} km<br>Χρόνος: ${mins} λεπτά<br>Υψομετρική Διαφορά: ${Math.round(
               elevationGain
             )} m`;
           }
@@ -496,7 +496,7 @@
         if (panel) {
           const km = (res.distance / 1000).toFixed(2);
           const mins = Math.ceil(res.duration / 60);
-          panel.innerHTML = `Distance: ${km} km<br>Time: ${mins} min<br>Elevation: ${Math.round(
+          panel.innerHTML = `Απόσταση: ${km} km<br>Χρόνος: ${mins} λεπτά<br>Υψομετρική Διαφορά: ${Math.round(
             elevationGain
           )} m`;
         }
@@ -769,13 +769,13 @@
         log("Geolocation not supported.");
         isNavigating = false;
         const btn = document.getElementById('gn-nav-toggle');
-        if (btn) btn.textContent = '▶ Start Navigation';
+        if (btn) btn.textContent = '▶ Έναρξη Πλοήγησης';
         return;
       }
   
       isNavigating = true;
       const toggleBtn = document.getElementById('gn-nav-toggle');
-      if (toggleBtn) toggleBtn.textContent = '■ Stop Navigation';
+      if (toggleBtn) toggleBtn.textContent = '■ Διακοπή Πλοήγησης';
   
       navigator.geolocation.getCurrentPosition(async (pos) => {
           const lang = getSelectedLanguage();
@@ -816,7 +816,7 @@
         if (!routeCoords.length) {
           log("No route found.");
           isNavigating = false;
-          if (toggleBtn) toggleBtn.textContent = '▶ Start Navigation';
+          if (toggleBtn) toggleBtn.textContent = '▶ Έναρξη Πλοήγησης';
           return;
         }
   
@@ -911,7 +911,7 @@
       }, err => {
         log("Geolocation error:", err.message);
         isNavigating = false;
-        if (toggleBtn) toggleBtn.textContent = '▶ Start Navigation';
+        if (toggleBtn) toggleBtn.textContent = '▶ Έναρξη Πλοήγησης';
       });
     }
   

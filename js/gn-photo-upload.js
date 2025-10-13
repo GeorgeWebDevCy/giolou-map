@@ -7,23 +7,23 @@ jQuery(function ($) {
         const data = new FormData(form);
         data.append('ajax', '1');
         const url = form.getAttribute('action') || form.action;
-        statusEl.text('Uploading...');
+        statusEl.text('Γίνεται μεταφόρτωση...');
         log('Sending upload to', url);
         fetch(url, { method: 'POST', body: data, credentials: 'same-origin' })
             .then(res => res.json())
             .then(resp => {
                 log('Upload response', resp);
                 if (resp.success) {
-                    const loc = resp.data && resp.data.title ? ' for ' + resp.data.title : '';
-                    statusEl.text('Upload received' + loc + ' and awaiting approval.');
+                    const loc = resp.data && resp.data.title ? ' για ' + resp.data.title : '';
+                    statusEl.text('Η μεταφόρτωση παραλήφθηκε' + loc + ' και αναμένει έγκριση.');
                     form.reset();
                 } else {
-                    statusEl.text('Error uploading file.');
+                    statusEl.text('Σφάλμα κατά τη μεταφόρτωση του αρχείου.');
                 }
             })
             .catch(err => {
                 log('Upload error', err);
-                statusEl.text('Error uploading file.');
+                statusEl.text('Σφάλμα κατά τη μεταφόρτωση του αρχείου.');
             });
     }
 

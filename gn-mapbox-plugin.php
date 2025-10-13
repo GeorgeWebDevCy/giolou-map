@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.177.7
+Version: 2.177.8
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -50,7 +50,7 @@ add_action('plugins_loaded', 'gn_mapbox_load_textdomain');
  */
 function gn_register_map_location_cpt() {
     register_post_type('map_location', [
-        'label' => __('Map Locations', 'gn-mapbox'),
+        'label' => __('Τοποθεσίες Χάρτη', 'gn-mapbox'),
         'public' => true,
         'menu_icon' => 'dashicons-location-alt',
         'supports' => ['title', 'editor', 'thumbnail'],
@@ -242,7 +242,7 @@ register_activation_hook(__FILE__, 'gn_plugin_activate');
  * screen when editing a Map Location post.
  */
 function gn_add_photos_meta_box() {
-    add_meta_box('gn_location_photos', 'Location Photos', 'gn_photos_meta_box_html', 'map_location', 'normal', 'default');
+    add_meta_box('gn_location_photos', __('Φωτογραφίες Τοποθεσίας', 'gn-mapbox'), 'gn_photos_meta_box_html', 'map_location', 'normal', 'default');
 }
 add_action('add_meta_boxes', 'gn_add_photos_meta_box');
 
@@ -250,14 +250,14 @@ function gn_add_waypoint_meta_box() {
     // This meta box allows admins to mark a location as a hidden waypoint. When
     // checked the marker will not appear on the map but can still be used when
     // calculating routes.
-    add_meta_box('gn_waypoint', __('Invisible Waypoint', 'gn-mapbox'), 'gn_waypoint_meta_box_html', 'map_location', 'side', 'default');
+    add_meta_box('gn_waypoint', __('Αόρατο Σημείο Πορείας', 'gn-mapbox'), 'gn_waypoint_meta_box_html', 'map_location', 'side', 'default');
 }
 add_action('add_meta_boxes', 'gn_add_waypoint_meta_box');
 
 function gn_add_order_meta_box() {
     // This meta box lets admins choose the order in which locations appear on
     // the map and in route directions. Lower numbers come first.
-    add_meta_box('gn_location_order', __('Position', 'gn-mapbox'), 'gn_order_meta_box_html', 'map_location', 'side', 'default');
+    add_meta_box('gn_location_order', __('Θέση', 'gn-mapbox'), 'gn_order_meta_box_html', 'map_location', 'side', 'default');
 }
 add_action('add_meta_boxes', 'gn_add_order_meta_box');
 /**
@@ -281,10 +281,10 @@ function gn_photos_meta_box_html($post) {
     }
     echo '</div>';
     echo '<input type="hidden" id="gn_location_photos_input" name="gn_location_photos" value="' . esc_attr($image_ids) . '" />';
-    echo '<button type="button" class="button" id="gn_add_photos_button">' . esc_html__('Add Photos', 'gn-mapbox') . '</button> ';
-    echo '<button type="button" class="button" id="gn_clear_photos_button">' . esc_html__('Clear', 'gn-mapbox') . '</button>';
-    $select_photos = wp_json_encode(__('Select Photos', 'gn-mapbox'));
-    $use_photos = wp_json_encode(__('Use these photos', 'gn-mapbox'));
+    echo '<button type="button" class="button" id="gn_add_photos_button">' . esc_html__('Προσθήκη Φωτογραφιών', 'gn-mapbox') . '</button> ';
+    echo '<button type="button" class="button" id="gn_clear_photos_button">' . esc_html__('Καθαρισμός', 'gn-mapbox') . '</button>';
+    $select_photos = wp_json_encode(__('Επιλογή Φωτογραφιών', 'gn-mapbox'));
+    $use_photos = wp_json_encode(__('Χρήση αυτών των φωτογραφιών', 'gn-mapbox'));
     ?>
     <script>
     jQuery(function($){
@@ -341,7 +341,7 @@ function gn_waypoint_meta_box_html($post) {
     wp_nonce_field('gn_save_waypoint', 'gn_waypoint_nonce');
     $is_waypoint = get_post_meta($post->ID, '_gn_waypoint', true);
     $checked = $is_waypoint === '1' ? 'checked' : '';
-    echo '<label><input type="checkbox" name="gn_waypoint" value="1" ' . $checked . '> ' . esc_html__('Invisible waypoint (no marker)', 'gn-mapbox') . '</label>';
+    echo '<label><input type="checkbox" name="gn_waypoint" value="1" ' . $checked . '> ' . esc_html__('Αόρατο σημείο πορείας (χωρίς δείκτη)', 'gn-mapbox') . '</label>';
 }
 
 function gn_order_meta_box_html($post) {
@@ -384,7 +384,7 @@ function gn_save_order_meta_box($post_id) {
 add_action('save_post_map_location', 'gn_save_order_meta_box');
 
 function gn_location_columns($columns) {
-    $columns['gn_order'] = __('Position', 'gn-mapbox');
+    $columns['gn_order'] = __('Θέση', 'gn-mapbox');
     return $columns;
 }
 add_filter('manage_map_location_posts_columns', 'gn_location_columns');
@@ -402,7 +402,7 @@ function gn_quick_edit_custom_box($column, $post_type) {
     <fieldset class="inline-edit-col-right">
         <div class="inline-edit-col">
             <label>
-                <span class="title"><?php echo esc_html__('Position', 'gn-mapbox'); ?></span>
+                <span class="title"><?php echo esc_html__('Θέση', 'gn-mapbox'); ?></span>
                 <span class="input-text-wrap"><input type="number" name="gn_location_order" class="gn-location-order" value=""></span>
             </label>
         </div>
@@ -464,8 +464,8 @@ function gn_enqueue_mapbox_assets() {
         'debug' => get_option('gn_mapbox_debug') === '1'
     ]);
     wp_localize_script('gn-mapbox-init', 'gnPhotoStrings', [
-        'select_photos' => __('Select Photos', 'gn-mapbox'),
-        'use_photos'    => __('Use these photos', 'gn-mapbox')
+        'select_photos' => __('Επιλογή Φωτογραφιών', 'gn-mapbox'),
+        'use_photos'    => __('Χρήση αυτών των φωτογραφιών', 'gn-mapbox')
     ]);
 }
 add_action('wp_enqueue_scripts', 'gn_enqueue_mapbox_assets');
@@ -570,14 +570,14 @@ function gn_map_shortcode() {
 add_shortcode('gn_map', 'gn_map_shortcode');
 
 function gn_mapbox_add_admin_menu() {
-    add_options_page(__('GN Mapbox Settings', 'gn-mapbox'), 'GN Mapbox', 'manage_options', 'gn-mapbox', 'gn_mapbox_settings_page');
+    add_options_page(__('Ρυθμίσεις GN Mapbox', 'gn-mapbox'), 'GN Mapbox', 'manage_options', 'gn-mapbox', 'gn_mapbox_settings_page');
 }
 add_action('admin_menu', 'gn_mapbox_add_admin_menu');
 
 function gn_mapbox_settings_page() {
     ?>
     <div class="wrap">
-        <h1><?php echo esc_html(__('GN Mapbox Settings', 'gn-mapbox')); ?></h1>
+        <h1><?php echo esc_html(__('Ρυθμίσεις GN Mapbox', 'gn-mapbox')); ?></h1>
         <form method="post" action="options.php">
             <?php
             settings_fields('gn_mapbox_settings');
@@ -593,10 +593,10 @@ function gn_mapbox_settings_init() {
     register_setting('gn_mapbox_settings', 'gn_mapbox_token');
     register_setting('gn_mapbox_settings', 'gn_mapbox_debug');
 
-    add_settings_section('gn_mapbox_section', __('Mapbox Settings', 'gn-mapbox'), null, 'gn-mapbox');
+    add_settings_section('gn_mapbox_section', __('Ρυθμίσεις Mapbox', 'gn-mapbox'), null, 'gn-mapbox');
 
-    add_settings_field('gn_mapbox_token', __('Access Token', 'gn-mapbox'), 'gn_mapbox_token_render', 'gn-mapbox', 'gn_mapbox_section');
-    add_settings_field('gn_mapbox_debug', __('Enable Debug Panel', 'gn-mapbox'), 'gn_mapbox_debug_render', 'gn-mapbox', 'gn_mapbox_section');
+    add_settings_field('gn_mapbox_token', __('Κλειδί Πρόσβασης', 'gn-mapbox'), 'gn_mapbox_token_render', 'gn-mapbox', 'gn_mapbox_section');
+    add_settings_field('gn_mapbox_debug', __('Ενεργοποίηση Πίνακα Αποσφαλμάτωσης', 'gn-mapbox'), 'gn_mapbox_debug_render', 'gn-mapbox', 'gn_mapbox_section');
 }
 add_action('admin_init', 'gn_mapbox_settings_init');
 
@@ -607,7 +607,7 @@ function gn_mapbox_token_render() {
 
 function gn_mapbox_debug_render() {
     $checked = get_option('gn_mapbox_debug') === '1' ? 'checked' : '';
-    echo '<label><input type="checkbox" name="gn_mapbox_debug" value="1" ' . $checked . '> ' . esc_html__('Show Debug Panel', 'gn-mapbox') . '</label>';
+    echo '<label><input type="checkbox" name="gn_mapbox_debug" value="1" ' . $checked . '> ' . esc_html__('Εμφάνιση Πίνακα Αποσφαλμάτωσης', 'gn-mapbox') . '</label>';
 }
 
 function gn_mapbox_serve_sw() {
@@ -627,18 +627,18 @@ function gn_photo_upload_shortcode($atts) {
     $atts = shortcode_atts(['location' => 0], $atts);
     $location_id = intval($atts['location']);
     if (!$location_id) {
-        return __('Invalid location.', 'gn-mapbox');
+        return __('Μη έγκυρη τοποθεσία.', 'gn-mapbox');
     }
     $output = '';
     if (!empty($_GET['gn_upload'])) {
         if ($_GET['gn_upload'] === 'success') {
             $loc_title = get_the_title(intval($_GET['loc'] ?? 0));
-            $msg = __('Upload received', 'gn-mapbox');
-            if ($loc_title) $msg .= ' ' . sprintf(__('for %s', 'gn-mapbox'), esc_html($loc_title));
-            $msg .= ' ' . __('and awaiting approval.', 'gn-mapbox');
+            $msg = __('Η μεταφόρτωση παραλήφθηκε', 'gn-mapbox');
+            if ($loc_title) $msg .= ' ' . sprintf(__('για %s', 'gn-mapbox'), esc_html($loc_title));
+            $msg .= ' ' . __('και αναμένει έγκριση.', 'gn-mapbox');
             $output .= '<div class="gn-upload-msg">'.$msg.'</div>';
         } elseif ($_GET['gn_upload'] === 'error') {
-            $output .= '<div class="gn-upload-msg">'.esc_html__('Error uploading file.', 'gn-mapbox').'</div>';
+            $output .= '<div class="gn-upload-msg">'.esc_html__('Σφάλμα κατά τη μεταφόρτωση του αρχείου.', 'gn-mapbox').'</div>';
         }
     }
     $output .= '<form class="gn-photo-upload-form" method="post" enctype="multipart/form-data" action="'.esc_url(admin_url('admin-post.php')).'">';
@@ -646,7 +646,7 @@ function gn_photo_upload_shortcode($atts) {
     $output .= '<input type="hidden" name="action" value="gn_photo_upload">';
     $output .= '<input type="hidden" name="location_id" value="'.$location_id.'">';
     $output .= '<input type="file" name="gn_photo[]" accept="image/*,video/*" class="gn-photo-file" style="display:none;" multiple required>';
-    $output .= '<button type="button" class="gn-photo-button">' . esc_html__('Upload Media', 'gn-mapbox') . '</button>';
+    $output .= '<button type="button" class="gn-photo-button">' . esc_html__('Μεταφόρτωση Πολυμέσων', 'gn-mapbox') . '</button>';
     $output .= '<span class="gn-upload-status"></span>';
     $output .= '</form>';
     return $output;
@@ -658,7 +658,7 @@ add_shortcode('gn_photo_upload','gn_photo_upload_shortcode');
  */
 function gn_handle_photo_upload() {
     if (!isset($_POST['gn_photo_nonce']) || !wp_verify_nonce($_POST['gn_photo_nonce'],'gn_photo_upload')) {
-        wp_die(__('Invalid nonce', 'gn-mapbox'));
+        wp_die(__('Μη έγκυρο διακριτικό ασφαλείας', 'gn-mapbox'));
     }
     $is_ajax = isset($_POST['ajax']);
     $location_id = intval($_POST['location_id'] ?? 0);
@@ -727,7 +727,7 @@ add_action('admin_post_nopriv_gn_photo_upload','gn_handle_photo_upload');
 add_action('admin_post_gn_photo_upload','gn_handle_photo_upload');
 
 function gn_photo_approval_menu() {
-    add_submenu_page('upload.php', __('Photo Approvals', 'gn-mapbox'), __('Photo Approvals', 'gn-mapbox'), 'manage_options', 'gn-photo-approvals', 'gn_photo_approval_page');
+    add_submenu_page('upload.php', __('Έγκριση Φωτογραφιών', 'gn-mapbox'), __('Έγκριση Φωτογραφιών', 'gn-mapbox'), 'manage_options', 'gn-photo-approvals', 'gn_photo_approval_page');
 }
 add_action('admin_menu', 'gn_photo_approval_menu');
 
@@ -753,7 +753,7 @@ function gn_photo_approval_page() {
     }
 
     if (!$pending_map) {
-        echo '<div class="wrap"><h1>' . esc_html__('Pending Photo Uploads', 'gn-mapbox') . '</h1><p>' . esc_html__('No pending photos.', 'gn-mapbox') . '</p></div>';
+        echo '<div class="wrap"><h1>' . esc_html__('Εκκρεμείς Μεταφορτώσεις Φωτογραφιών', 'gn-mapbox') . '</h1><p>' . esc_html__('Δεν υπάρχουν εκκρεμείς φωτογραφίες.', 'gn-mapbox') . '</p></div>';
         return;
     }
 
@@ -764,8 +764,8 @@ function gn_photo_approval_page() {
         'numberposts' => -1,
     ]);
 
-    echo '<div class="wrap"><h1>' . esc_html__('Pending Photo Uploads', 'gn-mapbox') . '</h1>';
-    echo '<table class="widefat"><thead><tr><th>' . esc_html__('Preview', 'gn-mapbox') . '</th><th>' . esc_html__('Location', 'gn-mapbox') . '</th><th>' . esc_html__('Approve', 'gn-mapbox') . '</th><th>' . esc_html__('Delete', 'gn-mapbox') . '</th></tr></thead><tbody>';
+    echo '<div class="wrap"><h1>' . esc_html__('Εκκρεμείς Μεταφορτώσεις Φωτογραφιών', 'gn-mapbox') . '</h1>';
+    echo '<table class="widefat"><thead><tr><th>' . esc_html__('Προεπισκόπηση', 'gn-mapbox') . '</th><th>' . esc_html__('Τοποθεσία', 'gn-mapbox') . '</th><th>' . esc_html__('Έγκριση', 'gn-mapbox') . '</th><th>' . esc_html__('Διαγραφή', 'gn-mapbox') . '</th></tr></thead><tbody>';
     foreach ($pending as $p) {
         $loc = $pending_map[$p->ID];
         if (strpos($p->post_mime_type, 'video') === 0) {
@@ -783,19 +783,19 @@ function gn_photo_approval_page() {
         }
         echo '<td>'.$preview.'</td>';
         echo '<td>'.esc_html($loc->post_title).'</td>';
-        echo '<td><a class="button" href="'.$approve_url.'">'.esc_html__('Approve', 'gn-mapbox').'</a></td>';
-        echo '<td><a class="button" href="'.$delete_url.'">'.esc_html__('Delete', 'gn-mapbox').'</a></td>';
+        echo '<td><a class="button" href="'.$approve_url.'">'.esc_html__('Έγκριση', 'gn-mapbox').'</a></td>';
+        echo '<td><a class="button" href="'.$delete_url.'">'.esc_html__('Διαγραφή', 'gn-mapbox').'</a></td>';
         echo '</tr>';
     }
     echo '</tbody></table></div>';
 }
 
 function gn_process_photo_approval() {
-    if (!current_user_can('manage_options')) wp_die(__('Unauthorized', 'gn-mapbox'));
+    if (!current_user_can('manage_options')) wp_die(__('Μη εξουσιοδοτημένο αίτημα', 'gn-mapbox'));
     $photo_id = intval($_GET['photo_id'] ?? 0);
-    if (!$photo_id || !wp_verify_nonce($_GET['_wpnonce'], 'gn_approve_photo_'.$photo_id)) wp_die(__('Invalid request', 'gn-mapbox'));
+    if (!$photo_id || !wp_verify_nonce($_GET['_wpnonce'], 'gn_approve_photo_'.$photo_id)) wp_die(__('Μη έγκυρο αίτημα', 'gn-mapbox'));
     $attachment = get_post($photo_id);
-    if (!$attachment) wp_die(__('Photo not found', 'gn-mapbox'));
+    if (!$attachment) wp_die(__('Η φωτογραφία δεν βρέθηκε', 'gn-mapbox'));
     $location_id = $attachment->post_parent;
     wp_update_post(['ID'=>$photo_id,'post_status'=>'publish']);
     $gallery = get_post_meta($location_id, '_gn_location_photos', true);
@@ -813,11 +813,11 @@ function gn_process_photo_approval() {
 add_action('admin_post_gn_approve_photo', 'gn_process_photo_approval');
 
 function gn_process_photo_deletion() {
-    if (!current_user_can('manage_options')) wp_die(__('Unauthorized', 'gn-mapbox'));
+    if (!current_user_can('manage_options')) wp_die(__('Μη εξουσιοδοτημένο αίτημα', 'gn-mapbox'));
     $photo_id = intval($_GET['photo_id'] ?? 0);
-    if (!$photo_id || !wp_verify_nonce($_GET['_wpnonce'], 'gn_delete_photo_'.$photo_id)) wp_die(__('Invalid request', 'gn-mapbox'));
+    if (!$photo_id || !wp_verify_nonce($_GET['_wpnonce'], 'gn_delete_photo_'.$photo_id)) wp_die(__('Μη έγκυρο αίτημα', 'gn-mapbox'));
     $attachment = get_post($photo_id);
-    if (!$attachment) wp_die(__('Photo not found', 'gn-mapbox'));
+    if (!$attachment) wp_die(__('Η φωτογραφία δεν βρέθηκε', 'gn-mapbox'));
     $location_id = $attachment->post_parent;
     $pending = get_post_meta($location_id, '_gn_pending_photos', true);
     if ($pending) {
@@ -838,7 +838,7 @@ add_action('admin_post_gn_delete_photo', 'gn_process_photo_deletion');
 function gn_mapbox_giolou_shortcode() {
     $token = get_option('gn_mapbox_token');
     if (!$token) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+        return '<p class="gn-mapbox-error">' . esc_html__('Λείπει το κλειδί πρόσβασης Mapbox. Ορίστε το από Ρυθμίσεις → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
@@ -914,7 +914,7 @@ add_shortcode('gn_mapbox_giolou', 'gn_mapbox_giolou_shortcode');
 function gn_mapbox_giolou_100_shortcode() {
     $token = get_option('gn_mapbox_token');
     if (!$token) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+        return '<p class="gn-mapbox-error">' . esc_html__('Λείπει το κλειδί πρόσβασης Mapbox. Ορίστε το από Ρυθμίσεις → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
@@ -990,7 +990,7 @@ add_shortcode('gn_mapbox_giolou_100', 'gn_mapbox_giolou_100_shortcode');
 function gn_mapbox_palati_shortcode() {
     $token = get_option('gn_mapbox_token');
     if (!$token) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+        return '<p class="gn-mapbox-error">' . esc_html__('Λείπει το κλειδί πρόσβασης Mapbox. Ορίστε το από Ρυθμίσεις → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
@@ -1022,7 +1022,7 @@ add_shortcode('gn_mapbox_palati', 'gn_mapbox_palati_shortcode');
 function gn_mapbox_kokos_coffee_shortcode() {
     $token = get_option('gn_mapbox_token');
     if (!$token) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+        return '<p class="gn-mapbox-error">' . esc_html__('Λείπει το κλειδί πρόσβασης Mapbox. Ορίστε το από Ρυθμίσεις → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
@@ -1062,7 +1062,7 @@ add_shortcode('gn_mapbox_kokos_coffee', 'gn_mapbox_kokos_coffee_shortcode');
 function gn_mapbox_coffee_rooster_shortcode() {
     $token = get_option('gn_mapbox_token');
     if (!$token) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+        return '<p class="gn-mapbox-error">' . esc_html__('Λείπει το κλειδί πρόσβασης Mapbox. Ορίστε το από Ρυθμίσεις → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
@@ -1098,7 +1098,7 @@ add_shortcode('gn_mapbox_coffee_rooster', 'gn_mapbox_coffee_rooster_shortcode');
 // Paphos to Giolou
 function gn_mapbox_giolou_to_paphos_shortcode() {
     if (!get_option('gn_mapbox_token')) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+        return '<p class="gn-mapbox-error">' . esc_html__('Λείπει το κλειδί πρόσβασης Mapbox. Ορίστε το από Ρυθμίσεις → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
@@ -1135,7 +1135,7 @@ add_shortcode('gn_mapbox_giolou_paphos', 'gn_mapbox_giolou_to_paphos_shortcode')
 // Function name previously suggested opposite direction. Renamed for clarity.
 function gn_mapbox_airport_to_giolou_shortcode() {
     if (!get_option('gn_mapbox_token')) {
-        return '<p class="gn-mapbox-error">' . esc_html__('Mapbox access token missing. Set one under Settings → GN Mapbox.', 'gn-mapbox') . '</p>';
+        return '<p class="gn-mapbox-error">' . esc_html__('Λείπει το κλειδί πρόσβασης Mapbox. Ορίστε το από Ρυθμίσεις → GN Mapbox.', 'gn-mapbox') . '</p>';
     }
     ob_start();
     ?>
