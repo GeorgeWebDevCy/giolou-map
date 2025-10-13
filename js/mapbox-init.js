@@ -442,9 +442,9 @@
           if (panel) {
             const km = (res.distance / 1000).toFixed(2);
             const mins = Math.ceil(res.duration / 60);
-            panel.innerHTML = `Απόσταση: ${km} km<br>Χρόνος: ${mins} λεπτά<br>Υψομετρική Διαφορά: ${Math.round(
+            panel.innerHTML = `Απόσταση: ${km} χλμ<br>Χρόνος: ${mins} λεπτά<br>Υψομετρική Διαφορά: ${Math.round(
               elevationGain
-            )} m`;
+            )} μ`;
           }
           log('Route line drawn with', res.coordinates.length, 'points');
         } else {
@@ -496,9 +496,9 @@
         if (panel) {
           const km = (res.distance / 1000).toFixed(2);
           const mins = Math.ceil(res.duration / 60);
-          panel.innerHTML = `Απόσταση: ${km} km<br>Χρόνος: ${mins} λεπτά<br>Υψομετρική Διαφορά: ${Math.round(
+          panel.innerHTML = `Απόσταση: ${km} χλμ<br>Χρόνος: ${mins} λεπτά<br>Υψομετρική Διαφορά: ${Math.round(
             elevationGain
-          )} m`;
+          )} μ`;
         }
         log('Route line drawn with', res.coordinates.length, 'points');
       } else {
@@ -857,9 +857,9 @@
           if (panel) {
             const km = (remainingDistance / 1000).toFixed(2);
             const mins = Math.ceil(remainingDuration / 60);
-            panel.innerHTML = `Distance: ${km} km<br>Time: ${mins} min<br>Elevation: ${Math.round(
+            panel.innerHTML = `Απόσταση: ${km} χλμ<br>Χρόνος: ${mins} λεπτά<br>Υψόμετρο: ${Math.round(
               currentElevation
-            )} m`;
+            )} μ`;
           }
         };
         updatePanel();
