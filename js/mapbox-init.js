@@ -25,6 +25,7 @@
     let isNavigating = false;
     let currentRoute = 'path1';
     let currentElevation = 0;
+    const basePoints = Array.isArray(gnMapData.points) ? gnMapData.points : [];
     const defaultLang = localStorage.getItem("gn_voice_lang") || "el-GR";
     const routeSettings = {
       path1: { center: [32.474444, 34.923889], zoom: 16 },
@@ -136,6 +137,7 @@
         <div id="gn-nav-controls" style="padding: 6px; background: white;">
             <select id="gn-route-select" class="gn-nav-select">
               <option value="">Επιλέξτε Διαδρομή</option>
+              <option value="all">Όλες οι Τοποθεσίες</option>
               <option value="path1">Διαδρομή 1</option>
               <option value="path2">Διαδρομή 2</option>
               <option value="paphos">Πάφος → Γιόλου</option>
@@ -324,6 +326,7 @@
   
     function clearMap() {
       log('Clearing map');
+      coords = [];
       markers.forEach(m => m.remove());
       markers = [];
       popups.forEach(p => p.remove());
@@ -361,53 +364,107 @@
       clearMap();
       selectRoute(currentRoute);
     }
-  
+
+    function buildPopupHTML(loc) {
+      const galleryItems = Array.isArray(loc.gallery) ? loc.gallery : [];
+      const carouselHTML = galleryItems.length
+        ? '<div class="gn-carousel">'
+          + '<button class="gn-carousel-prev" aria-label="Προηγούμενο">&#10094;</button>'
+          + '<div class="gn-carousel-track">'
+          + galleryItems.map(item =>
+              `<div class="gn-slide">${item.type === 'video'
+                ? `<video src="${item.url}" controls></video>`
+                : `<img src="${item.url}" alt="${loc.title}">`}</div>`
+            ).join('')
+          + '</div>'
+          + '<button class="gn-carousel-next" aria-label="Επόμενο">&#10095;</button>'
+          + '</div>'
+        : '';
+      const uploadHTML = loc.upload_form ? `<div class="gn-upload-form">${loc.upload_form}</div>` : '';
+      const imageHTML = loc.image ? `<img src="${loc.image}" alt="${loc.title}">` : '';
+      const description = loc.content || '';
+
+      return `
+        <div class="popup-content">
+          <h3>${loc.title}</h3>
+          ${imageHTML}
+          <div class="gn-desc-label">Περιγραφή &raquo;</div>
+          <div class="gn-desc-content">${description}</div>
+          ${carouselHTML}
+          ${uploadHTML}
+        </div>`;
+    }
+
+    function renderLocationMarker(loc) {
+      if (!map || typeof loc !== 'object') {
+        return;
+      }
+
+      const lng = Number(loc.lng);
+      const lat = Number(loc.lat);
+
+      if (Number.isNaN(lng) || Number.isNaN(lat)) {
+        return;
+      }
+
+      const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(buildPopupHTML(loc));
+      const marker = new mapboxgl.Marker()
+        .setLngLat([lng, lat])
+        .addTo(map);
+
+      const showPopup = () => {
+        popups.forEach(p => p.remove());
+        popups = [];
+        popup.setLngLat([lng, lat]).addTo(map);
+        popups.push(popup);
+        const popupEl = popup.getElement();
+        if (popupEl) {
+          setupCarousel(popupEl);
+        }
+      };
+
+      const el = marker.getElement();
+      el.addEventListener('mouseenter', showPopup);
+      el.addEventListener('click', showPopup);
+      el.addEventListener('touchstart', showPopup);
+      markers.push(marker);
+    }
+
+    function showAllPoints() {
+      log('Displaying all base points');
+      if (!basePoints.length) {
+        return;
+      }
+
+      let bounds = null;
+
+      basePoints.forEach(loc => {
+        renderLocationMarker(loc);
+        const lng = Number(loc.lng);
+        const lat = Number(loc.lat);
+        if (Number.isNaN(lng) || Number.isNaN(lat)) {
+          return;
+        }
+        if (!bounds) {
+          bounds = new mapboxgl.LngLatBounds([lng, lat], [lng, lat]);
+        } else {
+          bounds.extend([lng, lat]);
+        }
+      });
+
+      if (bounds) {
+        map.fitBounds(bounds, { padding: 40, maxZoom: 16 });
+      }
+    }
+
     async function showNatureRoute(pathKey) {
       clearMap();
       log('Showing nature route', pathKey);
       const locs = gnMapData.paths[pathKey] || [];
       coords = locs.map(loc => [loc.lng, loc.lat]);
       locs.forEach(loc => {
-        const carouselHTML = loc.gallery && loc.gallery.length
-          ? '<div class="gn-carousel">' +
-            '<button class="gn-carousel-prev" aria-label="Προηγούμενο">&#10094;</button>' +
-            '<div class="gn-carousel-track">' +
-            loc.gallery.map(item =>
-              `<div class="gn-slide">${item.type === 'video'
-                ? `<video src="${item.url}" controls></video>`
-                : `<img src="${item.url}" alt="${loc.title}">`}</div>`
-            ).join('') +
-            '</div>' +
-            '<button class="gn-carousel-next" aria-label="Επόμενο">&#10095;</button>' +
-            '</div>'
-          : '';
-        const uploadHTML = loc.upload_form ? `<div class="gn-upload-form">${loc.upload_form}</div>` : '';
-        const popupHTML = `
-          <div class="popup-content">
-            <h3>${loc.title}</h3>
-            ${loc.image ? `<img src="${loc.image}" alt="${loc.title}">` : ''}
-            <div class="gn-desc-label">Περιγραφή &raquo;</div>
-            <div class="gn-desc-content">${loc.content}</div>
-            ${carouselHTML}
-            ${uploadHTML}
-          </div>`;
         if (!loc.waypoint) {
-          const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML);
-          const marker = new mapboxgl.Marker()
-            .setLngLat([loc.lng, loc.lat])
-            .addTo(map);
-          const el = marker.getElement();
-          const showPopup = () => {
-            popups.forEach(p => p.remove());
-            popups = [];
-            popup.setLngLat([loc.lng, loc.lat]).addTo(map);
-            popups.push(popup);
-            setupCarousel(popup.getElement());
-          };
-          el.addEventListener('mouseenter', showPopup);
-          el.addEventListener('click', showPopup);
-          el.addEventListener('touchstart', showPopup);
-          markers.push(marker);
+          renderLocationMarker(loc);
         }
       });
       if (coords.length > 1) {
@@ -515,18 +572,24 @@
   
     function selectRoute(val) {
       log('Route selected:', val);
-      currentRoute = val || 'path1';
+      const key = val || 'all';
+      currentRoute = key;
       clearMap();
-      if (!val) return;
-      applyRouteSettings(val);
-      if (val === 'path1' || val === 'path2') {
-        showNatureRoute(val);
-      } else if (val === 'paphos') {
+      if (key === 'all') {
+        showAllPoints();
+        return;
+      }
+      applyRouteSettings(key);
+      if (key === 'path1' || key === 'path2') {
+        showNatureRoute(key);
+      } else if (key === 'paphos') {
         showDrivingRoute([32.42293021940422, 34.774631500416966], [32.4773453, 34.9220437]);
-      } else if (val === 'airport') {
+      } else if (key === 'airport') {
         showDrivingRoute([32.490296426999045, 34.70974769197728], [32.4773453, 34.9220437]);
       }
-      setTimeout(() => applyRouteSettings(val), 1000);
+      if (routeSettings[key]) {
+        setTimeout(() => applyRouteSettings(key), 1000);
+      }
     }
   
     window.setMode = function (mode) {
@@ -776,7 +839,14 @@
       isNavigating = true;
       const toggleBtn = document.getElementById('gn-nav-toggle');
       if (toggleBtn) toggleBtn.textContent = '■ Διακοπή Πλοήγησης';
-  
+
+      if (!coords.length) {
+        log('No coordinates available for navigation.');
+        isNavigating = false;
+        if (toggleBtn) toggleBtn.textContent = '▶ Έναρξη Πλοήγησης';
+        return;
+      }
+
       navigator.geolocation.getCurrentPosition(async (pos) => {
           const lang = getSelectedLanguage();
           if (!window.speechSynthesis) {

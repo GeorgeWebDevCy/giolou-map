@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.177.10
+Version: 2.177.11
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -454,9 +454,12 @@ function gn_enqueue_mapbox_assets() {
     wp_enqueue_script('gn-mapbox-init', plugin_dir_url(__FILE__) . 'js/mapbox-init.js', ['jquery', 'mapbox-gl-language', 'mapbox-gl-directions'], null, true);
     wp_enqueue_script('gn-sw-register', plugin_dir_url(__FILE__) . 'js/sw-register.js', [], null, true);
     wp_enqueue_script('gn-photo-upload', plugin_dir_url(__FILE__) . 'js/gn-photo-upload.js', ['jquery'], null, true);
+    $map_dataset = gn_get_map_locations();
+
     wp_localize_script('gn-mapbox-init', 'gnMapData', [
         'accessToken' => get_option('gn_mapbox_token'),
-        'paths'       => gn_get_map_locations(),
+        'paths'       => $map_dataset['paths'],
+        'points'      => $map_dataset['points'],
         'debug'       => get_option('gn_mapbox_debug') === '1',
         'swPath'      => home_url('/?gn_map_sw=1'),
     ]);
@@ -471,97 +474,142 @@ function gn_enqueue_mapbox_assets() {
 add_action('wp_enqueue_scripts', 'gn_enqueue_mapbox_assets');
 
 function gn_get_map_locations() {
-    $debug_enabled = get_option('gn_mapbox_debug') === '1';
+  $debug_enabled = get_option('gn_mapbox_debug') === '1';
 
-    $locations = [
-        'path1' => [],
-        'path2' => [],
+  $dataset = [
+    'paths'  => [
+      'path1' => [],
+      'path2' => [],
+    ],
+    'points' => [],
+  ];
+
+  $query = new WP_Query([
+    'post_type'      => 'map_location',
+    'posts_per_page' => -1,
+    'meta_key'       => '_gn_location_order',
+    'orderby'        => 'meta_value_num',
+    'order'          => 'ASC',
+  ]);
+
+  while ($query->have_posts()) {
+    $query->the_post();
+
+    $lat_meta = get_post_meta(get_the_ID(), 'latitude', true);
+    $lng_meta = get_post_meta(get_the_ID(), 'longitude', true);
+
+    if ($lat_meta === '' && function_exists('get_field')) {
+      $lat_meta = get_field('latitude');
+    }
+    if ($lng_meta === '' && function_exists('get_field')) {
+      $lng_meta = get_field('longitude');
+    }
+
+    if ($lat_meta === '' || $lng_meta === '') {
+      continue;
+    }
+
+    $gallery_ids = get_post_meta(get_the_ID(), '_gn_location_photos', true);
+    $gallery = [];
+    $featured_id = get_post_thumbnail_id();
+
+    if ($gallery_ids) {
+      foreach (explode(',', $gallery_ids) as $gid) {
+        if ($featured_id && intval($gid) === intval($featured_id)) {
+          continue;
+        }
+
+        $attachment = get_post($gid);
+        if (!$attachment) {
+          continue;
+        }
+
+        if (strpos($attachment->post_mime_type, 'video') === 0) {
+          $url = wp_get_attachment_url($gid);
+          if ($url) {
+            $gallery[] = ['url' => $url, 'type' => 'video'];
+          }
+        } else {
+          $url = wp_get_attachment_image_url($gid, 'medium');
+          if ($url) {
+            $gallery[] = ['url' => $url, 'type' => 'image'];
+          }
+        }
+      }
+    }
+
+    $raw_content = get_the_content();
+    $raw_content = preg_replace('/\[gn_photo_upload[^\]]*\]/', '', $raw_content);
+    $path_key = get_post_meta(get_the_ID(), '_gn_path', true) === '2' ? 'path2' : 'path1';
+
+    $location = [
+      'id'          => get_the_ID(),
+      'title'       => get_the_title(),
+      'content'     => apply_filters('the_content', $raw_content),
+      'image'       => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
+      'gallery'     => $gallery,
+      'upload_form' => do_shortcode('[gn_photo_upload location="' . get_the_ID() . '"]'),
+      'lat'         => floatval($lat_meta),
+      'lng'         => floatval($lng_meta),
+      'waypoint'    => get_post_meta(get_the_ID(), '_gn_waypoint', true) === '1',
     ];
 
-    $query = new WP_Query([
-        'post_type'      => 'map_location',
-        'posts_per_page' => -1,
-        'meta_key'       => '_gn_location_order',
-        'orderby'        => 'meta_value_num',
-        'order'          => 'ASC',
-    ]);
+    $dataset['paths'][$path_key][] = $location;
 
-    while ($query->have_posts()) {
-        $query->the_post();
-        $lat = get_field('latitude');
-        $lng = get_field('longitude');
-        if (!$lat || !$lng) {
-            continue;
-        }
-
-        $gallery_ids = get_post_meta(get_the_ID(), '_gn_location_photos', true);
-        $gallery = [];
-        $featured_id = get_post_thumbnail_id();
-        if ($gallery_ids) {
-            foreach (explode(',', $gallery_ids) as $gid) {
-                if ($featured_id && intval($gid) === intval($featured_id)) {
-                    continue;
-                }
-                $attachment = get_post($gid);
-                if (!$attachment) continue;
-                if (strpos($attachment->post_mime_type, 'video') === 0) {
-                    $url = wp_get_attachment_url($gid);
-                    if ($url) $gallery[] = ['url' => $url, 'type' => 'video'];
-                } else {
-                    $url = wp_get_attachment_image_url($gid, 'medium');
-                    if ($url) $gallery[] = ['url' => $url, 'type' => 'image'];
-                }
-            }
-        }
-
-        $raw_content = get_the_content();
-        $raw_content = preg_replace('/\[gn_photo_upload[^\]]*\]/', '', $raw_content);
-        $path = get_post_meta(get_the_ID(), '_gn_path', true) === '2' ? 'path2' : 'path1';
-        $locations[$path][] = [
-            'id'          => get_the_ID(),
-            'title'       => get_the_title(),
-            'content'     => apply_filters('the_content', $raw_content),
-            'image'       => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
-            'gallery'     => $gallery,
-            'upload_form' => do_shortcode('[gn_photo_upload location="' . get_the_ID() . '"]'),
-            'lat'         => floatval($lat),
-            'lng'         => floatval($lng),
-            'waypoint'    => get_post_meta(get_the_ID(), '_gn_waypoint', true) === '1',
-        ];
+    if (!$location['waypoint']) {
+      $dataset['points'][] = $location;
     }
-    wp_reset_postdata();
+  }
 
-    if (empty($locations['path1']) && empty($locations['path2'])) {
-        gn_import_default_locations();
-        gn_ensure_shortcodes_for_all_locations();
+  wp_reset_postdata();
 
-        $files = [
-            'path1' => plugin_dir_path(__FILE__) . 'data/nature-path-1.json',
-            'path2' => plugin_dir_path(__FILE__) . 'data/nature-path-2.json',
-        ];
+  if (empty($dataset['paths']['path1']) && empty($dataset['paths']['path2'])) {
+    gn_import_default_locations();
+    gn_ensure_shortcodes_for_all_locations();
 
-        foreach ($files as $key => $json_file) {
-            if (file_exists($json_file)) {
-                $json = file_get_contents($json_file);
-                $data = json_decode($json, true);
-                if (is_array($data)) {
-                    foreach ($data as &$loc) {
-                        $loc['waypoint'] = !empty($loc['waypoint']);
-                    }
-                    $locations[$key] = $data;
-                    if ($debug_enabled) {
-                        error_log('Loaded ' . count($data) . ' locations for ' . $key . ' from JSON fallback');
-                    }
-                } elseif ($debug_enabled) {
-                    error_log('Failed to parse locations JSON for ' . $key);
-                }
-            } elseif ($debug_enabled) {
-                error_log('Fallback locations file not found for ' . $key);
-            }
+    $files = [
+      'path1' => plugin_dir_path(__FILE__) . 'data/nature-path-1.json',
+      'path2' => plugin_dir_path(__FILE__) . 'data/nature-path-2.json',
+    ];
+
+    foreach ($files as $key => $json_file) {
+      if (!file_exists($json_file)) {
+        if ($debug_enabled) {
+          error_log('Fallback locations file not found for ' . $key);
         }
-    }
+        continue;
+      }
 
-    return $locations;
+      $json = file_get_contents($json_file);
+      $data = json_decode($json, true);
+
+      if (!is_array($data)) {
+        if ($debug_enabled) {
+          error_log('Failed to parse locations JSON for ' . $key);
+        }
+        continue;
+      }
+
+      $normalized = [];
+
+      foreach ($data as $loc) {
+        $loc['waypoint'] = !empty($loc['waypoint']);
+        $normalized[] = $loc;
+
+        if (empty($loc['waypoint'])) {
+          $dataset['points'][] = $loc;
+        }
+      }
+
+      $dataset['paths'][$key] = $normalized;
+
+      if ($debug_enabled) {
+        error_log('Loaded ' . count($normalized) . ' locations for ' . $key . ' from JSON fallback');
+      }
+    }
+  }
+
+  return $dataset;
 }
 
 function gn_map_shortcode() {
