@@ -3,7 +3,7 @@ Contributors: georgewebdev
 Tags: mapbox,acf,locations,map
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 2.177.9
+Stable tag: 2.177.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,9 @@ Enable the Debug Panel option in **Settings → GN Mapbox** to output verbose lo
 Markers are logged in the order they appear in `data/nature-path-1.json` and `data/nature-path-2.json`.
 
 == Changelog ==
+= 2.177.10 =
+* Επανήλθε η αρχή και το τέλος της Διαδρομής 2 στο «Μουσείο/έκθεση φωτογραφίας»
+* Bumped plugin version
 = 2.177.9 =
 * Μεταφράστηκαν σε ελληνικά οι ενδείξεις απόστασης, χρόνου και υψομέτρου στο πάνελ πλοήγησης
 * Bumped plugin version
