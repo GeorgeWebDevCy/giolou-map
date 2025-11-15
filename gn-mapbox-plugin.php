@@ -2,7 +2,7 @@
 /*
 Plugin Name: GN Mapbox Locations with ACF
 Description: Display custom post type locations using Mapbox with ACF-based coordinates, navigation, elevation, optional galleries and full debug panel.
-Version: 2.177.14
+Version: 2.177.15
 Author: George Nicolaou
 Text Domain: gn-mapbox
 Domain Path: /languages
@@ -20,10 +20,6 @@ Domain Path: /languages
  */
 
 defined('ABSPATH') || exit;
-
-if (!defined('GN_MAPBOX_PLUGIN_VERSION')) {
-  define('GN_MAPBOX_PLUGIN_VERSION', '2.177.14');
-}
 
 require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -66,196 +62,36 @@ add_action('init', 'gn_register_map_location_cpt');
  * Check if a location already exists in the database. It first looks for a post
  * with the same title. If coordinates are provided it also checks for posts with
  * matching latitude and longitude to avoid duplicates when importing data.
- *
- * @return int|false The post ID if found, otherwise false.
  */
 function gn_location_exists($title, $lat = null, $lng = null) {
-  $existing = get_page_by_title($title, OBJECT, 'map_location');
-  if ($existing) {
-    return intval($existing->ID);
-  }
-
-  if ($lat !== null && $lng !== null) {
-    $query = new WP_Query([
-      'post_type'      => 'map_location',
-      'posts_per_page' => 1,
-      'fields'         => 'ids',
-      'meta_query'     => [
-        [
-          'key'   => 'latitude',
-          'value' => $lat,
-        ],
-        [
-          'key'   => 'longitude',
-          'value' => $lng,
-        ],
-      ],
-    ]);
-
-    $ids = $query->posts;
-    wp_reset_postdata();
-
-    if (!empty($ids)) {
-      return intval($ids[0]);
+    $existing = get_page_by_title($title, OBJECT, 'map_location');
+    if ($existing) {
+        return true;
     }
-  }
-
-  return false;
+    if ($lat !== null && $lng !== null) {
+        $query = new WP_Query([
+            'post_type'      => 'map_location',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+            'meta_query'     => [
+                [
+                    'key'   => 'latitude',
+                    'value' => $lat,
+                ],
+                [
+                    'key'   => 'longitude',
+                    'value' => $lng,
+                ],
+            ],
+        ]);
+        $exists = $query->have_posts();
+        wp_reset_postdata();
+        if ($exists) {
+            return true;
+        }
+    }
+    return false;
 }
-
-function gn_mapbox_assign_path_to_location($post_id, $path_key) {
-  $current = get_post_meta($post_id, '_gn_path', true);
-  $target = $path_key === 'path2' ? '2' : '1';
-
-  if (is_string($current)) {
-    $current = strtolower($current);
-    if ($current === 'path1') {
-      $current = '1';
-    } elseif ($current === 'path2') {
-      $current = '2';
-    }
-  }
-
-  if ($current === 'both' || $current === 'all') {
-    return;
-  }
-
-  if ($current && $current !== $target) {
-    update_post_meta($post_id, '_gn_path', 'both');
-    return;
-  }
-
-  if ($current !== $target) {
-    update_post_meta($post_id, '_gn_path', $target);
-  }
-}
-
-function gn_mapbox_get_location_paths($raw_path) {
-  if (!is_string($raw_path) || $raw_path === '') {
-    return ['path1'];
-  }
-
-  $normalized = strtolower(trim($raw_path));
-
-  if ($normalized === 'both' || $normalized === 'all') {
-    return ['path1', 'path2'];
-  }
-
-  if ($normalized === '2' || $normalized === 'path2') {
-    return ['path2'];
-  }
-
-  if ($normalized === '1' || $normalized === 'path1') {
-    return ['path1'];
-  }
-
-  if (strpos($normalized, ',') !== false) {
-    $parts = array_filter(array_map('trim', explode(',', $normalized)));
-    $paths = [];
-
-    foreach ($parts as $part) {
-      $part = strtolower($part);
-
-      if ($part === 'both' || $part === 'all') {
-        $paths['path1'] = 'path1';
-        $paths['path2'] = 'path2';
-        continue;
-      }
-
-      if ($part === '1' || $part === 'path1') {
-        $paths['path1'] = 'path1';
-      }
-
-      if ($part === '2' || $part === 'path2') {
-        $paths['path2'] = 'path2';
-      }
-    }
-
-    if (!empty($paths)) {
-      return array_values($paths);
-    }
-  }
-
-  return ['path1'];
-}
-
-function gn_mapbox_run_migrations() {
-  $stored_version = get_option('gn_mapbox_plugin_version');
-
-  if ($stored_version === GN_MAPBOX_PLUGIN_VERSION) {
-    return;
-  }
-
-  gn_mapbox_sync_shared_locations();
-
-  update_option('gn_mapbox_plugin_version', GN_MAPBOX_PLUGIN_VERSION);
-}
-
-function gn_mapbox_sync_shared_locations() {
-  $files = [
-    'path1' => plugin_dir_path(__FILE__) . 'data/nature-path-1.json',
-    'path2' => plugin_dir_path(__FILE__) . 'data/nature-path-2.json',
-  ];
-
-  $paths_by_title = [];
-
-  foreach ($files as $path_key => $json_file) {
-    if (!file_exists($json_file)) {
-      continue;
-    }
-
-    $json = file_get_contents($json_file);
-    if ($json === false) {
-      continue;
-    }
-
-    $locations = json_decode($json, true);
-    if (!is_array($locations)) {
-      continue;
-    }
-
-    foreach ($locations as $location) {
-      if (empty($location['title'])) {
-        continue;
-      }
-
-      $title = $location['title'];
-
-      if (!isset($paths_by_title[$title])) {
-        $paths_by_title[$title] = [];
-      }
-
-      $paths_by_title[$title][$path_key] = true;
-    }
-  }
-
-  if (empty($paths_by_title)) {
-    return;
-  }
-
-  foreach ($paths_by_title as $title => $paths) {
-    if (count($paths) < 2) {
-      continue;
-    }
-
-    $post = get_page_by_title($title, OBJECT, 'map_location');
-    if (!$post) {
-      continue;
-    }
-
-    $current = get_post_meta($post->ID, '_gn_path', true);
-
-    if ($current === 'both') {
-      continue;
-    }
-
-    if ($current === '1' || $current === 'path1' || $current === '2' || $current === 'path2' || $current === '' || $current === null) {
-      update_post_meta($post->ID, '_gn_path', 'both');
-    }
-  }
-}
-
-add_action('init', 'gn_mapbox_run_migrations', 20);
 
 /**
  * Load the fallback location data shipped with the plugin. It reads a JSON file
@@ -287,9 +123,7 @@ function gn_import_default_locations() {
 
       $lat = $location['lat'] ?? null;
       $lng = $location['lng'] ?? null;
-      $existing_id = gn_location_exists($location['title'], $lat, $lng);
-      if ($existing_id) {
-        gn_mapbox_assign_path_to_location($existing_id, $path_key);
+      if (gn_location_exists($location['title'], $lat, $lng)) {
         continue;
       }
 
@@ -395,9 +229,8 @@ function gn_ensure_shortcodes_for_all_locations() {
  * photo upload form shortcode.
  */
 function gn_plugin_activate() {
-  gn_import_default_locations();
-  gn_ensure_shortcodes_for_all_locations();
-  update_option('gn_mapbox_plugin_version', GN_MAPBOX_PLUGIN_VERSION);
+    gn_import_default_locations();
+    gn_ensure_shortcodes_for_all_locations();
 }
 register_activation_hook(__FILE__, 'gn_plugin_activate');
 
@@ -707,7 +540,7 @@ function gn_get_map_locations() {
 
     $raw_content = get_the_content();
     $raw_content = preg_replace('/\[gn_photo_upload[^\]]*\]/', '', $raw_content);
-    $path_keys = gn_mapbox_get_location_paths(get_post_meta(get_the_ID(), '_gn_path', true));
+    $path_key = get_post_meta(get_the_ID(), '_gn_path', true) === '2' ? 'path2' : 'path1';
 
     $location = [
       'id'          => get_the_ID(),
@@ -721,13 +554,7 @@ function gn_get_map_locations() {
       'waypoint'    => get_post_meta(get_the_ID(), '_gn_waypoint', true) === '1',
     ];
 
-    foreach ($path_keys as $path_key) {
-      if (!isset($dataset['paths'][$path_key])) {
-        $dataset['paths'][$path_key] = [];
-      }
-
-      $dataset['paths'][$path_key][] = $location;
-    }
+    $dataset['paths'][$path_key][] = $location;
 
     if (!$location['waypoint']) {
       $dataset['points'][] = $location;
